@@ -14,20 +14,24 @@ static int s_configselected = 0;
 static int s_scene = 0;
 static int s_title_page = 0;
 static int s_onscreen_items;
-bool IsClkEnabled = IsClkActive();
 
 static vector<Title> *s_titles = getAllTitles();
 static int s_max_title_pages = s_titles->size() / max_title_items;
-static vector<string> FirstMenuItems{"Games"};
+static vector<string> FirstMenuItems{"Games", "PlaceHldr", "PlaceHldr", "Delete Config"};
 
 void menuMainLoop()
 {
     if (s_scene == 0)
     {
         if (!filesystem::exists(logFlag))
-            FirstMenuItems.push_back("Toggle sys-clk Logging: Disabled");
+            FirstMenuItems[1] = ("Toggle sys-clk Logging: Disabled");
         else
-            FirstMenuItems.push_back("Toggle sys-clk Logging: Enabled");
+            FirstMenuItems[1] = ("Toggle sys-clk Logging: Enabled");
+
+        if (IsClkActive())
+            FirstMenuItems[2] = "sys-clk is enabled!";
+        else
+            FirstMenuItems[2] = "sys-clk is disabled!";
 
         printItems(FirstMenuItems, "Main Menu");
     }
@@ -65,6 +69,7 @@ void menuMainLoop()
                 {
                 case 0:
                     s_scene = 1;
+                    s_selection = 0;
                     printf(CONSOLE_ESC(2J));
                     printTitles();
                     break;
@@ -73,13 +78,44 @@ void menuMainLoop()
                     if (!filesystem::exists(logFlag))
                     {
                         fclose(fopen(logFlag.c_str(), "w"));
-                        FirstMenuItems[FirstMenuItems.size() - 1] = "Toggle sys-clk Logging: Enabled";
+                        FirstMenuItems[1] = "Toggle sys-clk Logging: Enabled";
                     }
                     else
                     {
                         remove(logFlag.c_str());
-                        FirstMenuItems[FirstMenuItems.size() - 1] = "Toggle sys-clk Logging: Disabled";
+                        FirstMenuItems[1] = "Toggle sys-clk Logging: Disabled";
                     }
+                    needsRefresh = true;
+                    break;
+                }
+                case 3:
+                    fclose(fopen(configFile.c_str(), "w"));
+                    s_scene = 1;
+                    s_selection = 0;
+                    printf(CONSOLE_ESC(2J));
+                    printTitles();
+                    break;
+                case 2:
+                {
+                    pmshellInitialize();
+                    if (IsClkActive())
+                    {
+                        if (R_SUCCEEDED(pmshellTerminateProcessByTitleId(sysClkTid)))
+                        {
+                            FirstMenuItems[2] = "sys-clk is disabled!";
+                            remove(boot2Flag.c_str());
+                        }
+                    }
+                    else
+                    {
+                        u64 pid;
+                        if (R_SUCCEEDED(pmshellLaunchProcess(0, sysClkTid, FsStorageId_None, &pid)))
+                        {
+                            FirstMenuItems[2] = "sys-clk is enabled!";
+                            fopen(boot2Flag.c_str(), "w");
+                        }
+                    }
+                    pmshellExit();
                     needsRefresh = true;
                     break;
                 }
@@ -90,6 +126,12 @@ void menuMainLoop()
             {
                 printf(CONSOLE_ESC(2J));
                 printItems(FirstMenuItems, "Main Menu");
+            }
+
+            if (kDown & KEY_B)
+            {
+                delete s_titles;
+                return;
             }
         }
         else if (s_scene == 1)
@@ -136,7 +178,7 @@ void menuMainLoop()
                 s_gameselected = (s_title_page * max_title_items) + s_selection;
                 s_selection = 0;
                 printf(CONSOLE_ESC(2J));
-                printConfig(s_titles->at(s_gameselected), ConfigItems);
+                printConfig(ConfigItems);
             }
 
             if (needsRefresh)
@@ -210,6 +252,12 @@ void menuMainLoop()
                     s_scene = 5;
                     printItems(MEMClocks, "RAM Clocks");
                     break;
+                case 15:
+                    ResetConfig();
+                    s_scene = 1;
+                    s_selection = s_gameselected - (s_title_page * max_title_items);
+                    printTitles();
+                    break;
                 default:
                     break;
                 }
@@ -218,7 +266,7 @@ void menuMainLoop()
             if (needsRefresh)
             {
                 printf(CONSOLE_ESC(2J));
-                printConfig(s_titles->at(s_gameselected), ConfigItems);
+                printConfig(ConfigItems);
             }
 
             if (kDown & KEY_B)
@@ -256,7 +304,7 @@ void menuMainLoop()
                 s_scene = 2;
                 s_selection = s_configselected;
                 printf(CONSOLE_ESC(2J));
-                printConfig(s_titles->at(s_gameselected), ConfigItems);
+                printConfig(ConfigItems);
             }
 
             if (needsRefresh)
@@ -270,7 +318,7 @@ void menuMainLoop()
                 printf(CONSOLE_ESC(2J));
                 s_scene = 2;
                 s_selection = s_configselected;
-                printConfig(s_titles->at(s_gameselected), ConfigItems);
+                printConfig(ConfigItems);
             }
         }
         //GPU
@@ -300,7 +348,7 @@ void menuMainLoop()
                 s_scene = 2;
                 s_selection = s_configselected;
                 printf(CONSOLE_ESC(2J));
-                printConfig(s_titles->at(s_gameselected), ConfigItems);
+                printConfig(ConfigItems);
             }
 
             if (needsRefresh)
@@ -314,7 +362,7 @@ void menuMainLoop()
                 printf(CONSOLE_ESC(2J));
                 s_scene = 2;
                 s_selection = s_configselected;
-                printConfig(s_titles->at(s_gameselected), ConfigItems);
+                printConfig(ConfigItems);
             }
         }
         //MEM
@@ -344,7 +392,7 @@ void menuMainLoop()
                 s_scene = 2;
                 s_selection = s_configselected;
                 printf(CONSOLE_ESC(2J));
-                printConfig(s_titles->at(s_gameselected), ConfigItems);
+                printConfig(ConfigItems);
             }
 
             if (needsRefresh)
@@ -358,7 +406,7 @@ void menuMainLoop()
                 printf(CONSOLE_ESC(2J));
                 s_scene = 2;
                 s_selection = s_configselected;
-                printConfig(s_titles->at(s_gameselected), ConfigItems);
+                printConfig(ConfigItems);
             }
         }
         else if (s_scene == -1)
@@ -382,6 +430,21 @@ void menuMainLoop()
     }
 }
 
+void ResetConfig()
+{
+    stringstream ss;
+    ss << 0 << hex << uppercase << s_titles->at(s_gameselected).TitleID;
+    auto buff = ss.str();
+    Ini *config = Ini::parseFile(configFile);
+    if (config->findSection(buff) != nullptr)
+    {
+        vector<IniSection *>::iterator it = find(config->sections.begin(), config->sections.end(), config->findSection(buff));
+        config->sections.erase(it);
+        config->writeToFile(configFile);
+    }
+    delete config;
+}
+
 void ChangeConfiguration(const vector<string> &vect)
 {
     stringstream ss;
@@ -400,6 +463,11 @@ void ChangeConfiguration(const vector<string> &vect)
     else
     {
         config->findSection(buff)->findFirstOption(ConfigItems.at(s_configselected))->value = vect.at(s_selection);
+    }
+    if (config->findSection(s_titles->at(s_gameselected).TitleName) == nullptr)
+    {
+        vector<IniSection *>::iterator it = find(config->sections.begin(), config->sections.end(), config->findSection(buff));
+        config->sections.insert(it, new IniSection(SEMICOLON_COMMENT, s_titles->at(s_gameselected).TitleName));
     }
     config->writeToFile(configFile);
     delete config;
@@ -427,13 +495,6 @@ void printTitles()
 void printItems(const vector<string> &items, string menuTitle)
 {
     printf(CONSOLE_MAGENTA "\x1b[0;%dH%s\n", (40 - ((int)menuTitle.size() / 2)), menuTitle.c_str());
-    if (menuTitle == "Main Menu")
-    {
-        if (IsClkEnabled)
-            printf("\x1b[2;31Hsys-clk is enabled!\n");
-        else
-            printf("\x1b[2;30Hsys-clk is disabled!\n");
-    }
     for (int i = 0; i < (int)items.size(); i++)
     {
         const char *prefix = " ";
@@ -443,8 +504,9 @@ void printItems(const vector<string> &items, string menuTitle)
     }
 }
 
-void printConfig(Title title, const vector<string> &configItems)
+void printConfig(const vector<string> &configItems)
 {
+    Title title = s_titles->at(s_gameselected);
     stringstream ss;
     ss << 0 << hex << uppercase << title.TitleID << ": " << title.TitleName;
     string buff = ss.str();
@@ -458,6 +520,11 @@ void printConfig(Title title, const vector<string> &configItems)
         const char *prefix = " ";
         if (s_selection == i)
             prefix = ">";
+        if (i == (int)configItems.size() - 1)
+        {
+            printf(CONSOLE_WHITE "%s%s", prefix, configItems[i].c_str());
+            break;
+        }
         IniSection *section = config->findSection(buff);
         if (section != nullptr)
         {

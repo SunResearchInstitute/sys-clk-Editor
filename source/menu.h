@@ -27,7 +27,8 @@ const std::vector<std::string> ConfigItems{
     "handheld_charging_official_mem",
     "handheld_cpu",
     "handheld_gpu",
-    "handheld_mem"};
+    "handheld_mem",
+    "Rest to stock"};
 const std::vector<std::string> CPUClocks{
     "1785",
     "1683",
@@ -66,10 +67,11 @@ const std::vector<std::string> GPUClocks{
 const int max_title_items = 43;
 const std::string logFlag = "sdmc:/config/sys-clk/log.flag";
 const std::string configFile = "sdmc:/config/sys-clk/config.ini";
+const std::string boot2Flag = "sdmc:/atmosphere/titles/00FF0000636C6BFF/flags/boot2.flag";
 const u64 sysClkTid = 0x00FF0000636C6BFF;
 
 void ChangeConfiguration(const std::vector<std::string> &vect);
-void printConfig(Title title, const std::vector<std::string> &configItems);
+void printConfig(const std::vector<std::string> &configItems);
 void menuMainLoop();
 std::vector<Title> *getAllTitles();
 std::string getAppName(u64 Tid);
@@ -77,3 +79,4 @@ void printTitles();
 void printItems(const std::vector<std::string> &items, std::string menuTitle);
 void getAllConfigItems(std::string option, simpleIniParser::Ini *config, simpleIniParser::IniSection *Section, simpleIniParser::IniOption *Option);
 bool IsClkActive();
+void ResetConfig();
