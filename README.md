@@ -1,5 +1,5 @@
-# sys-clk Manager
-Manage your sys-clk configuration!<br>
+# sys-clk Editor
+Edit your sys-clk configuration!<br>
 The icon is placeholder, suggestions for a proper icon are appericated!<br>
 
 # Acknowledgements

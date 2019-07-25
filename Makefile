@@ -37,13 +37,13 @@ include $(DEVKITPRO)/libnx/switch_rules
 #   of a homebrew executable (.nro). This is intended to be used for sysmodules.
 #   NACP building is skipped as well.
 #---------------------------------------------------------------------------------
-TARGET		:=	$(notdir $(CURDIR))
+TARGET		:=	sys-clk-Editor
 BUILD		:=	build
 SOURCES		:=	source
 DATA		:=	data
 INCLUDES	:=	include
 
-APP_TITLE   := sys-clk Manager
+APP_TITLE   := sys-clk Editor
 APP_AUTHOR  := Sun
 APP_VERSION := 1.0.1
 #ROMFS	:=	romfs
