@@ -531,9 +531,9 @@ bool IsClkActive()
     pmdmntGetTitlePid(&pid, 0x00FF0000636C6BFF);
     if (pid > 0)
     {
-        return true;
         pmdmntExit();
+        return true;
     }
-    return false;
     pmdmntExit();
+    return false;
 }
