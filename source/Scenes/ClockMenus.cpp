@@ -1,6 +1,6 @@
 #include "ClockMenus.h"
 
-CPUMenu::CPUMenu() {}
+CPUMenu::CPUMenu() : Scene() {}
 void CPUMenu::Display(u64 kDown)
 {
     bool needsRefresh = false;
@@ -46,7 +46,7 @@ void CPUMenu::Display(u64 kDown)
     }
 }
 
-GPUMenu::GPUMenu() {}
+GPUMenu::GPUMenu(): Scene() {}
 
 void GPUMenu::Display(u64 kDown)
 {
@@ -93,7 +93,7 @@ void GPUMenu::Display(u64 kDown)
     }
 }
 
-RAMMenu::RAMMenu() {}
+RAMMenu::RAMMenu(): Scene() {}
 void RAMMenu::Display(u64 kDown)
 {
     bool needsRefresh = false;

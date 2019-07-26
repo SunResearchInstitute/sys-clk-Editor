@@ -3,7 +3,7 @@
 
 using namespace std;
 
-MainMenu::MainMenu() {}
+MainMenu::MainMenu(): Scene() {}
 
 void MainMenu::Display(u64 kDown)
 {

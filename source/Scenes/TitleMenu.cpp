@@ -1,5 +1,5 @@
 #include "TitleMenu.h"
-
+TitleMenu::TitleMenu() : Scene() {}
 void TitleMenu::Display(u64 kDown)
 {
     bool needsRefresh = false;

@@ -1,6 +1,6 @@
 #include "ConfigMenu.h"
 
-ConfigMenu::ConfigMenu() {}
+ConfigMenu::ConfigMenu(): Scene() {}
  
 void ConfigMenu::Display(u64 kDown)
 {
