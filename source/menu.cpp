@@ -15,13 +15,14 @@ int configSelected = 0;
 int scene = 0;
 int title_page = 0;
 int onscreen_items;
-std::vector<Title> *titles = getAllTitles();
-int maxTitlePages = titles->size() / max_title_items;
+std::vector<Title> titles = getAllTitles();
+int maxTitlePages = titles.size() / max_title_items;
 std::vector<std::string> firstMenuItems{"Games", "PlaceHldr", "PlaceHldr", "Delete Config"};
 
 void menuMainLoop()
 {
     Scene *currentScene;
+    currentScene = new MainMenu();
     if (scene == 0)
     {
         if (!filesystem::exists(logFlag))
@@ -42,6 +43,15 @@ void menuMainLoop()
         delete currentScene;
         switch (scene)
         {
+        case -69:
+            delete currentScene;
+            return;
+        case -1:
+            currentScene = new nsFailedMenu();
+            break;
+        case -2:
+            currentScene = new nsRecordFailedMenu();
+            break;
         case 0:
             currentScene = new MainMenu();
             break;
@@ -59,19 +69,17 @@ void menuMainLoop()
             break;
         case 5:
             currentScene = new RAMMenu();
+        default:
+            break;
         }
         hidScanInput();
         u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
-        currentScene->Display(kDown);
-        //Error Scenes
-
-        if (kDown & KEY_PLUS || scene == -69)
+        if (kDown & KEY_PLUS)
         {
-            delete titles;
             delete currentScene;
             return;
         }
-
+        currentScene->Display(kDown);
         consoleUpdate(nullptr);
     }
 }
@@ -79,7 +87,7 @@ void menuMainLoop()
 void ResetConfig()
 {
     stringstream ss;
-    ss << 0 << hex << uppercase << titles->at(gameSelected).TitleID;
+    ss << 0 << hex << uppercase << titles.at(gameSelected).TitleID;
     auto buff = ss.str();
     Ini *config = Ini::parseFile(configFile);
     if (config->findSection(buff) != nullptr)
@@ -94,7 +102,7 @@ void ResetConfig()
 void ChangeConfiguration(const vector<string> &vect)
 {
     stringstream ss;
-    ss << 0 << hex << uppercase << titles->at(gameSelected).TitleID;
+    ss << 0 << hex << uppercase << titles.at(gameSelected).TitleID;
     auto buff = ss.str();
     Ini *config = Ini::parseFile(configFile);
 
@@ -110,10 +118,10 @@ void ChangeConfiguration(const vector<string> &vect)
     {
         config->findSection(buff)->findFirstOption(ConfigItems.at(configSelected))->value = vect.at(selection);
     }
-    if (config->findSection(titles->at(gameSelected).TitleName) == nullptr)
+    if (config->findSection(titles.at(gameSelected).TitleName) == nullptr)
     {
         vector<IniSection *>::iterator it = find(config->sections.begin(), config->sections.end(), config->findSection(buff));
-        config->sections.insert(it, new IniSection(SEMICOLON_COMMENT, titles->at(gameSelected).TitleName));
+        config->sections.insert(it, new IniSection(SEMICOLON_COMMENT, titles.at(gameSelected).TitleName));
     }
     config->writeToFile(configFile);
     delete config;
@@ -124,14 +132,14 @@ void printTitles()
 {
     printf(CONSOLE_MAGENTA "\x1b[0;36HGame List\n");
     int start = title_page * max_title_items;
-    int end = std::min(static_cast<int>(titles->size()), start + max_title_items);
+    int end = std::min(static_cast<int>(titles.size()), start + max_title_items);
     int j = 0;
     for (int i = start; i < end; i++)
     {
         const char *prefix = " ";
         if (selection == j)
             prefix = ">";
-        printf(CONSOLE_WHITE "%s%s\n", prefix, titles->at(i).TitleName.c_str());
+        printf(CONSOLE_WHITE "%s%s\n", prefix, titles.at(i).TitleName.c_str());
         j++;
     }
     onscreen_items = j;
@@ -152,7 +160,7 @@ void printItems(const vector<string> &items, string menuTitle)
 
 void printConfig(const vector<string> &configItems)
 {
-    Title title = titles->at(gameSelected);
+    Title title = titles.at(gameSelected);
     stringstream ss;
     ss << 0 << hex << uppercase << title.TitleID << ": " << title.TitleName;
     string buff = ss.str();
@@ -186,9 +194,9 @@ void printConfig(const vector<string> &configItems)
     delete config;
 }
 
-vector<Title> *getAllTitles()
+vector<Title> getAllTitles()
 {
-    vector<Title> *apps = new vector<Title>;
+    vector<Title> apps;
     NsApplicationRecord *appRecords = new NsApplicationRecord[1024]; // Nobody's going to have more than 1024 games hopefully...
     size_t actualAppRecordCnt = 0;
     Result rc;
@@ -199,7 +207,7 @@ vector<Title> *getAllTitles()
         return apps;
     }
     rc = nsListApplicationRecord(appRecords, sizeof(NsApplicationRecord) * 1024, 0, &actualAppRecordCnt);
-    if (R_FAILED(rc))
+    if (!R_FAILED(rc))
     {
         nsExit();
         scene = -2;
@@ -208,13 +216,13 @@ vector<Title> *getAllTitles()
     Title qlaunch;
     qlaunch.TitleID = 0x0100000000001000;
     qlaunch.TitleName = "qlaunch";
-    apps->push_back(qlaunch);
+    apps.push_back(qlaunch);
     for (u32 i = 0; i < actualAppRecordCnt; i++)
     {
         Title title;
         title.TitleID = appRecords[i].titleID;
         title.TitleName = getAppName(appRecords[i].titleID);
-        apps->push_back(title);
+        apps.push_back(title);
     }
 
     nsExit();

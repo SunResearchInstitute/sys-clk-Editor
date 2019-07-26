@@ -91,6 +91,6 @@ void MainMenu::Display(u64 kDown)
         printItems(firstMenuItems, "Main Menu");
     }
 
-    if (kDown & KEY_B)
+    if (kDown & KEY_B )
         scene = -69;
 }
