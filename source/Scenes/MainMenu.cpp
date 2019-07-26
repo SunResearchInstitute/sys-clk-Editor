@@ -3,8 +3,8 @@
 
 using namespace std;
 
-MainMenu::MainMenu(): Scene() {}
-
+MainMenu::MainMenu() {}
+MainMenu::~MainMenu() {}
 void MainMenu::Display(u64 kDown)
 {
     bool needsRefresh = false;

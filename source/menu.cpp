@@ -22,7 +22,6 @@ std::vector<std::string> firstMenuItems{"Games", "PlaceHldr", "PlaceHldr", "Dele
 void menuMainLoop()
 {
     Scene *currentScene;
-    currentScene = new MainMenu();
     if (scene == 0)
     {
         if (!filesystem::exists(logFlag))
@@ -40,11 +39,9 @@ void menuMainLoop()
 
     while (appletMainLoop())
     {
-        delete currentScene;
         switch (scene)
         {
         case -69:
-            delete currentScene;
             return;
         case -1:
             currentScene = new nsFailedMenu();
@@ -76,10 +73,12 @@ void menuMainLoop()
         u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
         if (kDown & KEY_PLUS)
         {
+            //This will never be null but idk how to disable the warning
             delete currentScene;
             return;
         }
         currentScene->Display(kDown);
+        delete currentScene;
         consoleUpdate(nullptr);
     }
 }
@@ -207,7 +206,7 @@ vector<Title> getAllTitles()
         return apps;
     }
     rc = nsListApplicationRecord(appRecords, sizeof(NsApplicationRecord) * 1024, 0, &actualAppRecordCnt);
-    if (!R_FAILED(rc))
+    if (R_FAILED(rc))
     {
         nsExit();
         scene = -2;

@@ -1,12 +1,14 @@
 #include "ErrorMenus.h"
+
 nsFailedMenu::nsFailedMenu() {}
+nsFailedMenu::~nsFailedMenu() {}
 void nsFailedMenu::Display(u64 kDown)
 {
     printf(CONSOLE_ESC(2J));
     printf(CONSOLE_RED "nsInitialize Failed!, click `+` to exit!\n");
 }
-
 nsRecordFailedMenu::nsRecordFailedMenu() {}
+nsRecordFailedMenu::~nsRecordFailedMenu() {}
 void nsRecordFailedMenu::Display(u64 kDown)
 {
     printf(CONSOLE_ESC(2J));
