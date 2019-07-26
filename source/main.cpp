@@ -12,24 +12,11 @@ int main(int argc, char **argv)
     //this is C++ we should use nullptr instead
     consoleInit(nullptr);
 
-    if (filesystem::exists(configFile))
-        menuMainLoop();
-    else
-    {
-        printf("Failed to open Sys-clk Config! press + to exit.");
-        while (appletMainLoop())
-        {
-            //Scan all the inputs. This should be done once for each frame
-            hidScanInput();
-            //hidKeysDown returns information about which buttons have been just pressed (and they weren't in the previous frame)
-            u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
+    //SimpleIniParser May or may not need the file to exist so we will create it anyways
+    if (!filesystem::exists(configFile))
+        fclose(fopen(configFile.c_str(), "w"));
+    menuMainLoop();
 
-            if (kDown & KEY_PLUS)
-                break;
-
-            consoleUpdate(nullptr);
-        }
-    }
     consoleExit(nullptr);
     return 0;
 }
