@@ -28,7 +28,7 @@ const std::vector<std::string> ConfigItems{
     "handheld_cpu",
     "handheld_gpu",
     "handheld_mem",
-    "Rest to stock"};
+    "Reset to stock"};
 const std::vector<std::string> CPUClocks{
     "1785",
     "1683",
