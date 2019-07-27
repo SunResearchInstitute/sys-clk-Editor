@@ -1,3 +1,4 @@
+#pragma once
 #include "scene.h"
 
 class TitleMenu : public Scene
