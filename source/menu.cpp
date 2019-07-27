@@ -90,7 +90,7 @@ void ResetConfig()
     ss << 0 << hex << uppercase << titles.at(gameSelected).TitleID;
     auto buff = ss.str();
     Ini *config = Ini::parseFile(configFile);
-    if (config->findSection(buff) != nullptr)
+    if (config->findSection(buff, false) != nullptr)
     {
         vector<IniSection *>::iterator it = find(config->sections.begin(), config->sections.end(), config->findSection(buff));
         config->sections.erase(it);
@@ -102,28 +102,64 @@ void ResetConfig()
 void ChangeConfiguration(const vector<string> &vect)
 {
     stringstream ss;
-    ss << 0 << hex << uppercase << titles.at(gameSelected).TitleID;
+    ss << 0 << hex << titles.at(gameSelected).TitleID;
     auto buff = ss.str();
     Ini *config = Ini::parseFile(configFile);
 
-    if (config->findSection(buff) == nullptr)
+    if (config->findSection(buff, false) == nullptr)
     {
         config->sections.push_back(new IniSection(SECTION, buff));
     }
-    if (config->findSection(buff)->findFirstOption(ConfigItems.at(configSelected)) == nullptr)
+    if (config->findSection(buff, false)->findFirstOption(ConfigItems.at(configSelected)) == nullptr)
     {
-        config->findSection(buff)->options.push_back(new IniOption(ConfigItems.at(configSelected), vect.at(selection)));
+        config->findSection(buff, false)->options.push_back(new IniOption(ConfigItems.at(configSelected), vect.at(selection)));
     }
     else
     {
-        config->findSection(buff)->findFirstOption(ConfigItems.at(configSelected))->value = vect.at(selection);
+        config->findSection(buff, false)->findFirstOption(ConfigItems.at(configSelected))->value = vect.at(selection);
     }
-    if (config->findSection(titles.at(gameSelected).TitleName) == nullptr)
+    if (config->findSection(titles.at(gameSelected).TitleName, false) == nullptr)
     {
-        vector<IniSection *>::iterator it = find(config->sections.begin(), config->sections.end(), config->findSection(buff));
+        vector<IniSection *>::iterator it = find(config->sections.begin(), config->sections.end(), config->findSection(buff, false));
         config->sections.insert(it, new IniSection(SEMICOLON_COMMENT, titles.at(gameSelected).TitleName));
     }
     config->writeToFile(configFile);
+    delete config;
+}
+
+void printConfig(const vector<string> &configItems)
+{
+    Title title = titles.at(gameSelected);
+    stringstream ss;
+    ss << 0 << hex << uppercase << title.TitleID << ": " << title.TitleName;
+    string buff = ss.str();
+    printf(CONSOLE_MAGENTA "\x1b[0;%dH%s\n", (40 - ((int)buff.size() / 2)), buff.c_str());
+    Ini *config = Ini::parseFile(configFile);
+    stringstream ss2;
+    ss2 << 0 << hex << uppercase << title.TitleID;
+    buff = ss2.str();
+    for (int i = 0; i < (int)ConfigItems.size(); i++)
+    {
+        const char *prefix = " ";
+        if (selection == i)
+            prefix = ">";
+        if (i == (int)configItems.size() - 1)
+        {
+            printf(CONSOLE_WHITE "%s%s", prefix, configItems[i].c_str());
+            break;
+        }
+        IniSection *section = config->findSection(buff, false);
+        if (section != nullptr)
+        {
+            IniOption *option = section->findFirstOption(configItems[i].c_str());
+            if (option != nullptr)
+                printf(CONSOLE_WHITE "%s%s: %s\n", prefix, configItems[i].c_str(), option->value.c_str());
+            else
+                printf(CONSOLE_WHITE "%s%s: 0\n", prefix, configItems[i].c_str());
+        }
+        else
+            printf(CONSOLE_WHITE "%s%s: 0\n", prefix, configItems[i].c_str());
+    }
     delete config;
 }
 
@@ -156,42 +192,6 @@ void printItems(const vector<string> &items, string menuTitle)
             prefix = ">";
         printf(CONSOLE_WHITE "%s%s\n", prefix, items[i].c_str());
     }
-}
-
-void printConfig(const vector<string> &configItems)
-{
-    Title title = titles.at(gameSelected);
-    stringstream ss;
-    ss << 0 << hex << uppercase << title.TitleID << ": " << title.TitleName;
-    string buff = ss.str();
-    printf(CONSOLE_MAGENTA "\x1b[0;%dH%s\n", (40 - ((int)buff.size() / 2)), buff.c_str());
-    Ini *config = Ini::parseFile(configFile);
-    stringstream ss2;
-    ss2 << 0 << hex << uppercase << title.TitleID;
-    buff = ss2.str();
-    for (int i = 0; i < (int)ConfigItems.size(); i++)
-    {
-        const char *prefix = " ";
-        if (selection == i)
-            prefix = ">";
-        if (i == (int)configItems.size() - 1)
-        {
-            printf(CONSOLE_WHITE "%s%s", prefix, configItems[i].c_str());
-            break;
-        }
-        IniSection *section = config->findSection(buff);
-        if (section != nullptr)
-        {
-            IniOption *option = section->findFirstOption(configItems[i].c_str());
-            if (option != nullptr)
-                printf(CONSOLE_WHITE "%s%s: %s\n", prefix, configItems[i].c_str(), option->value.c_str());
-            else
-                printf(CONSOLE_WHITE "%s%s: 0\n", prefix, configItems[i].c_str());
-        }
-        else
-            printf(CONSOLE_WHITE "%s%s: 0\n", prefix, configItems[i].c_str());
-    }
-    delete config;
 }
 
 vector<Title> getAllTitles()
