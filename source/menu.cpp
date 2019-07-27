@@ -67,13 +67,12 @@ void menuMainLoop()
         case 5:
             currentScene = new RAMMenu();
         default:
-            break;
+            return;
         }
         hidScanInput();
         u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
         if (kDown & KEY_PLUS)
         {
-            //This will never be null but idk how to disable the warning
             delete currentScene;
             return;
         }
