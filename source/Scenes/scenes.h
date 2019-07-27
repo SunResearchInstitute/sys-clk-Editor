@@ -1,7 +1,7 @@
 #pragma once
 
-#include "mainMenu.h"
-#include "titleMenu.h"
-#include "configMenu.h"
+#include "MainMenu.h"
+#include "TitleMenu.h"
+#include "ConfigMenu.h"
 #include "ClockMenus.h"
 #include "ErrorMenus.h"

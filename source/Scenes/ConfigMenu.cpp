@@ -1,7 +1,7 @@
 #include "ConfigMenu.h"
 
-ConfigMenu::ConfigMenu(): Scene() {}
- 
+ConfigMenu::ConfigMenu() {}
+ConfigMenu::~ConfigMenu() {}
 void ConfigMenu::Display(u64 kDown)
 {
     bool needsRefresh = false;
