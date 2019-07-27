@@ -70,10 +70,20 @@ const std::string configFile = "sdmc:/config/sys-clk/config.ini";
 const std::string boot2Flag = "sdmc:/atmosphere/titles/00FF0000636C6BFF/flags/boot2.flag";
 const u64 sysClkTid = 0x00FF0000636C6BFF;
 
+extern signed int selection;
+extern int gameSelected;
+extern int configSelected;
+extern int scene;
+extern int title_page;
+extern int onscreen_items;
+extern std::vector<Title> titles;
+extern int maxTitlePages;
+extern std::vector<std::string> firstMenuItems;
+
 void ChangeConfiguration(const std::vector<std::string> &vect);
 void printConfig(const std::vector<std::string> &configItems);
 void menuMainLoop();
-std::vector<Title> *getAllTitles();
+std::vector<Title> getAllTitles();
 std::string getAppName(u64 Tid);
 void printTitles();
 void printItems(const std::vector<std::string> &items, std::string menuTitle);
