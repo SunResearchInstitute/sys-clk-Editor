@@ -22,7 +22,6 @@ std::vector<std::string> firstMenuItems{"Games", "PlaceHldr", "PlaceHldr", "Dele
 void menuMainLoop()
 {
     Scene *currentScene;
-    currentScene = new MainMenu();
     if (scene == 0)
     {
         if (!filesystem::exists(logFlag))
@@ -40,11 +39,9 @@ void menuMainLoop()
 
     while (appletMainLoop())
     {
-        delete currentScene;
         switch (scene)
         {
         case -69:
-            delete currentScene;
             return;
         case -1:
             currentScene = new nsFailedMenu();
@@ -76,10 +73,12 @@ void menuMainLoop()
         u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
         if (kDown & KEY_PLUS)
         {
+            //This will never be null but idk how to disable the warning
             delete currentScene;
             return;
         }
         currentScene->Display(kDown);
+        delete currentScene;
         consoleUpdate(nullptr);
     }
 }
@@ -92,7 +91,7 @@ void ResetConfig()
     Ini *config = Ini::parseFile(configFile);
     if (config->findSection(buff, false) != nullptr)
     {
-        vector<IniSection *>::iterator it = find(config->sections.begin(), config->sections.end(), config->findSection(buff));
+        vector<IniSection *>::iterator it = find(config->sections.begin(), config->sections.end(), config->findSection(buff, false));
         config->sections.erase(it);
         config->writeToFile(configFile);
     }
@@ -102,7 +101,7 @@ void ResetConfig()
 void ChangeConfiguration(const vector<string> &vect)
 {
     stringstream ss;
-    ss << 0 << hex << titles.at(gameSelected).TitleID;
+    ss << 0 << hex << uppercase << titles.at(gameSelected).TitleID;
     auto buff = ss.str();
     Ini *config = Ini::parseFile(configFile);
 
@@ -125,6 +124,37 @@ void ChangeConfiguration(const vector<string> &vect)
     }
     config->writeToFile(configFile);
     delete config;
+}
+
+//Thanks WerWolv :)
+void printTitles()
+{
+    printf(CONSOLE_MAGENTA "\x1b[0;36HGame List\n");
+    int start = title_page * max_title_items;
+    int end = std::min(static_cast<int>(titles.size()), start + max_title_items);
+    int j = 0;
+    for (int i = start; i < end; i++)
+    {
+        const char *prefix = " ";
+        if (selection == j)
+            prefix = ">";
+        printf(CONSOLE_WHITE "%s%s\n", prefix, titles.at(i).TitleName.c_str());
+        j++;
+    }
+    onscreen_items = j;
+    printf(CONSOLE_MAGENTA "Page %d/%d", title_page + 1, maxTitlePages + 1);
+}
+
+void printItems(const vector<string> &items, string menuTitle)
+{
+    printf(CONSOLE_MAGENTA "\x1b[0;%dH%s\n", (40 - ((int)menuTitle.size() / 2)), menuTitle.c_str());
+    for (int i = 0; i < (int)items.size(); i++)
+    {
+        const char *prefix = " ";
+        if (selection == i)
+            prefix = ">";
+        printf(CONSOLE_WHITE "%s%s\n", prefix, items[i].c_str());
+    }
 }
 
 void printConfig(const vector<string> &configItems)
@@ -163,37 +193,6 @@ void printConfig(const vector<string> &configItems)
     delete config;
 }
 
-//Thanks WerWolv :)
-void printTitles()
-{
-    printf(CONSOLE_MAGENTA "\x1b[0;36HGame List\n");
-    int start = title_page * max_title_items;
-    int end = std::min(static_cast<int>(titles.size()), start + max_title_items);
-    int j = 0;
-    for (int i = start; i < end; i++)
-    {
-        const char *prefix = " ";
-        if (selection == j)
-            prefix = ">";
-        printf(CONSOLE_WHITE "%s%s\n", prefix, titles.at(i).TitleName.c_str());
-        j++;
-    }
-    onscreen_items = j;
-    printf(CONSOLE_MAGENTA "Page %d/%d", title_page + 1, maxTitlePages + 1);
-}
-
-void printItems(const vector<string> &items, string menuTitle)
-{
-    printf(CONSOLE_MAGENTA "\x1b[0;%dH%s\n", (40 - ((int)menuTitle.size() / 2)), menuTitle.c_str());
-    for (int i = 0; i < (int)items.size(); i++)
-    {
-        const char *prefix = " ";
-        if (selection == i)
-            prefix = ">";
-        printf(CONSOLE_WHITE "%s%s\n", prefix, items[i].c_str());
-    }
-}
-
 vector<Title> getAllTitles()
 {
     vector<Title> apps;
@@ -207,7 +206,7 @@ vector<Title> getAllTitles()
         return apps;
     }
     rc = nsListApplicationRecord(appRecords, sizeof(NsApplicationRecord) * 1024, 0, &actualAppRecordCnt);
-    if (!R_FAILED(rc))
+    if (R_FAILED(rc))
     {
         nsExit();
         scene = -2;
