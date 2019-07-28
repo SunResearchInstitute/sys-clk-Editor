@@ -50,7 +50,7 @@ void ConfigMenu::Display(u64 kDown)
             scene = 4;
             printItems(GPUClocks, "GPU Clocks");
             break;
-        //RAM
+        //MEM
         case 2:
         case 5:
         case 8:
@@ -58,7 +58,7 @@ void ConfigMenu::Display(u64 kDown)
         case 14:
             selection = 0;
             scene = 5;
-            printItems(MEMClocks, "RAM Clocks");
+            printItems(MEMClocks, "MEM Clocks");
             break;
         case 15:
             ResetConfig();

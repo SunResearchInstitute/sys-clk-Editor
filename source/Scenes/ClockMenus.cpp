@@ -94,9 +94,9 @@ void GPUMenu::Display(u64 kDown)
     }
 }
 
-RAMMenu::RAMMenu() {}
-RAMMenu::~RAMMenu() {}
-void RAMMenu::Display(u64 kDown)
+MEMMenu::MEMMenu() {}
+MEMMenu::~MEMMenu() {}
+void MEMMenu::Display(u64 kDown)
 {
     bool needsRefresh = false;
     if (kDown & KEY_UP)
@@ -129,7 +129,7 @@ void RAMMenu::Display(u64 kDown)
     if (needsRefresh)
     {
         printf(CONSOLE_ESC(2J));
-        printItems(MEMClocks, "RAM Clocks");
+        printItems(MEMClocks, "MEM Clocks");
     }
 
     if (kDown & KEY_B)

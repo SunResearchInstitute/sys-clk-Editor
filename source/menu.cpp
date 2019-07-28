@@ -65,7 +65,8 @@ void menuMainLoop()
             currentScene = new GPUMenu();
             break;
         case 5:
-            currentScene = new RAMMenu();
+            currentScene = new MEMMenu();
+            break;
         default:
             return;
         }
@@ -152,7 +153,20 @@ void printItems(const vector<string> &items, string menuTitle)
         const char *prefix = " ";
         if (selection == i)
             prefix = ">";
-        printf(CONSOLE_WHITE "%s%s\n", prefix, items[i].c_str());
+        printf(CONSOLE_WHITE "%s%s", prefix, items[i].c_str());
+        if (menuTitle == "GPU Clocks")
+        {
+            printf(" %s", GPUCmt[i].c_str());
+        }
+        else if (menuTitle == "CPU Clocks")
+        {
+            printf(" %s", CPUCmt[i].c_str());
+        }
+        else if (menuTitle == "MEM Clocks")
+        {
+            printf(" %s", MEMCmt[i].c_str());
+        }
+        printf("\n");
     }
 }
 

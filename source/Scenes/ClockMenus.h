@@ -1,12 +1,12 @@
 #pragma once
 #include "scene.h"
 
-class RAMMenu : public Scene
+class MEMMenu : public Scene
 {
 public:
     virtual void Display(u64);
-    virtual ~RAMMenu();
-    RAMMenu();
+    virtual ~MEMMenu();
+    MEMMenu();
 };
 
 class GPUMenu : public Scene

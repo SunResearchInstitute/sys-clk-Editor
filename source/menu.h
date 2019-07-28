@@ -43,6 +43,20 @@ const std::vector<std::string> CPUClocks{
     "714",
     "612",
     "0"};
+const std::vector<std::string> CPUCmt{
+    "",
+    "",
+    "",
+    "",
+    "",
+    "-> sdev OC",
+    "",
+    "-> official docked and handheld",
+    "",
+    "",
+    "",
+    "",
+    "-> use default clock"};
 const std::vector<std::string> MEMClocks{
     "1600",
     "1331",
@@ -50,6 +64,13 @@ const std::vector<std::string> MEMClocks{
     "800",
     "665",
     "0"};
+const std::vector<std::string> MEMCmt{
+    "-> official docked",
+    "-> official handheld",
+    "",
+    "",
+    "",
+    "-> use default clock"};
 const std::vector<std::string> GPUClocks{
     "921",
     "844",
@@ -64,6 +85,21 @@ const std::vector<std::string> GPUClocks{
     "153",
     "76",
     "0"};
+const std::vector<std::string> GPUCmt{
+    "",
+    "",
+    "-> official docked/max handheld with USB charging",
+    "",
+    "",
+    "",
+    "-> max handheld w/o charging",
+    //sys-clk doc states two offical clocks?
+    "-> official handheld",
+    "-> official handheld",
+    "",
+    "",
+    "",
+    "-> use default clock"};
 const int max_title_items = 43;
 const std::string logFlag = "sdmc:/config/sys-clk/log.flag";
 const std::string configFile = "sdmc:/config/sys-clk/config.ini";
