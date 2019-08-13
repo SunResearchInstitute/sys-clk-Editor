@@ -245,13 +245,11 @@ string getAppName(u64 Tid)
 {
     NsApplicationControlData appControlData;
     size_t appControlDataSize = 0;
-    NsApplicationContentMetaStatus appContentMetaStatus;
     NacpLanguageEntry *languageEntry = nullptr;
 
     memset(&appControlData, 0x00, sizeof(NsApplicationControlData));
 
     nsGetApplicationControlData(1, Tid, &appControlData, sizeof(NsApplicationControlData), &appControlDataSize);
-    nsListApplicationContentMetaStatus(Tid, 0, &appContentMetaStatus, sizeof(NsApplicationContentMetaStatus), nullptr);
     nacpGetLanguageEntry(&appControlData.nacp, &languageEntry);
 
     return string(languageEntry->name);
