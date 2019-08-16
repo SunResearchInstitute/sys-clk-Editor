@@ -75,7 +75,7 @@ void MainMenu::Display(u64 kDown)
                 if (R_SUCCEEDED(pmshellLaunchProcess(0, sysClkTid, FsStorageId_None, &pid)))
                 {
                     firstMenuItems[2] = "sys-clk is enabled!";
-                    fopen(boot2Flag.c_str(), "w");
+                    fclose(fopen(boot2Flag.c_str(), "w"));
                 }
             }
             pmshellExit();
