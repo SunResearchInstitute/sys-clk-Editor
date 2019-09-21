@@ -38,7 +38,7 @@ void ConfigMenu::Display(u64 kDown)
         case 12:
             selection = 0;
             scene = 3;
-            printItems(CPUClocks, "CPU Clocks");
+            Utils::printItems(CPUClocks, "CPU Clocks");
             break;
         //GPU
         case 1:
@@ -48,7 +48,7 @@ void ConfigMenu::Display(u64 kDown)
         case 13:
             selection = 0;
             scene = 4;
-            printItems(GPUClocks, "GPU Clocks");
+            Utils::printItems(GPUClocks, "GPU Clocks");
             break;
         //MEM
         case 2:
@@ -58,13 +58,13 @@ void ConfigMenu::Display(u64 kDown)
         case 14:
             selection = 0;
             scene = 5;
-            printItems(MEMClocks, "MEM Clocks");
+            Utils::printItems(MEMClocks, "MEM Clocks");
             break;
         case 15:
-            ResetConfig();
+            Utils::ResetConfig();
             scene = 1;
             selection = gameSelected - (title_page * max_title_items);
-            printTitles();
+            Utils::printTitles();
             break;
         default:
             break;
@@ -74,7 +74,7 @@ void ConfigMenu::Display(u64 kDown)
     if (needsRefresh)
     {
         printf(CONSOLE_ESC(2J));
-        printConfig(ConfigItems);
+        Utils::printConfig(ConfigItems);
     }
 
     if (kDown & KEY_B)
@@ -82,6 +82,6 @@ void ConfigMenu::Display(u64 kDown)
         printf(CONSOLE_ESC(2J));
         scene = 1;
         selection = gameSelected - (title_page * max_title_items);
-        printTitles();
+        Utils::printTitles();
     }
 }

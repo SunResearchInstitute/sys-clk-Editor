@@ -25,17 +25,17 @@ void CPUMenu::Display(u64 kDown)
 
     if (kDown & KEY_A)
     {
-        ChangeConfiguration(CPUClocks);
+        Utils::ChangeConfiguration(CPUClocks);
         scene = 2;
         selection = configSelected;
         printf(CONSOLE_ESC(2J));
-        printConfig(ConfigItems);
+        Utils::printConfig(ConfigItems);
     }
 
     if (needsRefresh)
     {
         printf(CONSOLE_ESC(2J));
-        printItems(CPUClocks, "CPU Clocks");
+        Utils::printItems(CPUClocks, "CPU Clocks");
     }
 
     if (kDown & KEY_B)
@@ -43,7 +43,7 @@ void CPUMenu::Display(u64 kDown)
         printf(CONSOLE_ESC(2J));
         scene = 2;
         selection = configSelected;
-        printConfig(ConfigItems);
+        Utils::printConfig(ConfigItems);
     }
 }
 
@@ -72,17 +72,17 @@ void GPUMenu::Display(u64 kDown)
 
     if (kDown & KEY_A)
     {
-        ChangeConfiguration(GPUClocks);
+        Utils::ChangeConfiguration(GPUClocks);
         scene = 2;
         selection = configSelected;
         printf(CONSOLE_ESC(2J));
-        printConfig(ConfigItems);
+        Utils::printConfig(ConfigItems);
     }
 
     if (needsRefresh)
     {
         printf(CONSOLE_ESC(2J));
-        printItems(GPUClocks, "GPU Clocks");
+        Utils::printItems(GPUClocks, "GPU Clocks");
     }
 
     if (kDown & KEY_B)
@@ -90,7 +90,7 @@ void GPUMenu::Display(u64 kDown)
         printf(CONSOLE_ESC(2J));
         scene = 2;
         selection = configSelected;
-        printConfig(ConfigItems);
+        Utils::printConfig(ConfigItems);
     }
 }
 
@@ -119,17 +119,17 @@ void MEMMenu::Display(u64 kDown)
 
     if (kDown & KEY_A)
     {
-        ChangeConfiguration(MEMClocks);
+        Utils::ChangeConfiguration(MEMClocks);
         scene = 2;
         selection = configSelected;
         printf(CONSOLE_ESC(2J));
-        printConfig(ConfigItems);
+        Utils::printConfig(ConfigItems);
     }
 
     if (needsRefresh)
     {
         printf(CONSOLE_ESC(2J));
-        printItems(MEMClocks, "MEM Clocks");
+        Utils::printItems(MEMClocks, "MEM Clocks");
     }
 
     if (kDown & KEY_B)
@@ -137,6 +137,6 @@ void MEMMenu::Display(u64 kDown)
         printf(CONSOLE_ESC(2J));
         scene = 2;
         selection = configSelected;
-        printConfig(ConfigItems);
+        Utils::printConfig(ConfigItems);
     }
 }
