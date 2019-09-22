@@ -2,23 +2,19 @@
 #include <sstream>
 #include <algorithm>
 #include <cstring>
-#include <iostream>
-#include <fstream>
 
 using namespace std;
 using namespace simpleIniParser;
 
 namespace Utils
 {
-void Log(string str)
+void printError(string str)
 {
-    str += "\n";
-    FILE *f = fopen("sdmc:/editor-debug.log", "a");
-    fwrite(str.c_str(), sizeof(char), strlen(str.c_str()), f);
-    fclose(f);
+    scene = -1;
+    printf(CONSOLE_RED "\x1b[22;%dH%s", center(80, str.size()), str.c_str());
 }
 
-void ResetConfig()
+void resetConfig()
 {
     stringstream ss;
     ss << 0 << hex << uppercase << titles.at(gameSelected).TitleID;
@@ -33,31 +29,36 @@ void ResetConfig()
     delete config;
 }
 
-void ChangeConfiguration(const vector<string> &vect)
+void changeConfiguration(const vector<string> &vect)
 {
     stringstream ss;
     ss << 0 << hex << uppercase << titles.at(gameSelected).TitleID;
     auto buff = ss.str();
     Ini *config = Ini::parseFile(configFile);
 
-    if (config->findSection(buff, false) == nullptr)
+    IniSection *section = config->findSection(buff, false);
+    if (section == nullptr)
     {
         config->sections.push_back(new IniSection(IniSectionType::Section, buff));
+        section = config->findSection(buff, false);
     }
-    if (config->findSection(buff, false)->findFirstOption(ConfigItems.at(configSelected)) == nullptr)
+    if (section->findFirstOption(ConfigItems.at(configSelected)) == nullptr)
     {
 
-        config->findSection(buff, false)->options.push_back(new IniOption(IniOptionType::Option, ConfigItems.at(configSelected), vect.at(selection)));
+        section->options.push_back(new IniOption(IniOptionType::Option, ConfigItems.at(configSelected), vect.at(selection)));
     }
     else
     {
-        config->findSection(buff, false)->findFirstOption(ConfigItems.at(configSelected))->value = vect.at(selection);
+        section->findFirstOption(ConfigItems.at(configSelected))->value = vect.at(selection);
     }
+    //This broke in a more recent SimpleIniParser commit
+    /*
     if (config->findSection(titles.at(gameSelected).TitleName, false) == nullptr)
     {
         vector<IniSection *>::iterator it = find(config->sections.begin(), config->sections.end(), config->findSection(buff, false));
         config->sections.insert(it, new IniSection(IniSectionType::SemicolonComment, titles.at(gameSelected).TitleName));
     }
+    */
     config->writeToFile(configFile);
     delete config;
 }
@@ -83,7 +84,7 @@ void printTitles()
 
 void printItems(const vector<string> &items, string menuTitle)
 {
-    printf(CONSOLE_MAGENTA "\x1b[0;%dH%s\n", (40 - ((int)menuTitle.size() / 2)), menuTitle.c_str());
+    printf(CONSOLE_MAGENTA "\x1b[0;%dH%s\n", center(80, menuTitle.size()), menuTitle.c_str());
     for (int i = 0; i < (int)items.size(); i++)
     {
         const char *prefix = " ";
@@ -112,7 +113,7 @@ void printConfig(const vector<string> &configItems)
     stringstream ss;
     ss << 0 << hex << uppercase << title.TitleID << ": " << title.TitleName;
     string buff = ss.str();
-    printf(CONSOLE_MAGENTA "\x1b[0;%dH%s\n", (40 - ((int)buff.size() / 2)), buff.c_str());
+    printf(CONSOLE_MAGENTA "\x1b[0;%dH%s\n", center(80, buff.size()), buff.c_str());
     Ini *config = Ini::parseFile(configFile);
     stringstream ss2;
     ss2 << 0 << hex << uppercase << title.TitleID;
@@ -148,38 +149,26 @@ vector<Title> getAllTitles()
     NsApplicationRecord *appRecords = new NsApplicationRecord[1024]; // Nobody's going to have more than 1024 games hopefully...
     size_t actualAppRecordCnt = 0;
     Result rc;
-    rc = nsInitialize();
-    if (R_FAILED(rc))
-    {
-        scene = -1;
-        return apps;
-    }
+
     rc = nsListApplicationRecord(appRecords, sizeof(NsApplicationRecord) * 1024, 0, &actualAppRecordCnt);
     if (R_FAILED(rc))
     {
-        nsExit();
-        scene = -2;
+        Utils::printError("Failed to get Applications!");
         return apps;
     }
-    Utils::Log("Title count: " + to_string(actualAppRecordCnt));
+
     Title qlaunch;
     qlaunch.TitleID = 0x0100000000001000;
     qlaunch.TitleName = "qlaunch";
     apps.push_back(qlaunch);
     for (u32 i = 0; i < actualAppRecordCnt; i++)
     {
-        char buffer[20];
-        sprintf(buffer, "%016lx", appRecords[i].titleID);
-        string str(buffer);
-        Utils::Log("TID: " + str);
-        Utils::Log("Title: " + getAppName(appRecords[i].titleID));
         Title title;
         title.TitleID = appRecords[i].titleID;
         title.TitleName = getAppName(appRecords[i].titleID);
         apps.push_back(title);
     }
-
-    nsExit();
+    delete appRecords;
     return apps;
 }
 
@@ -195,27 +184,43 @@ string getAppName(u64 Tid)
     rc = nsGetApplicationControlData(1, Tid, &appControlData, sizeof(NsApplicationControlData), &appControlDataSize);
     if (R_FAILED(rc))
     {
-        return "null1";
+        stringstream ss;
+        ss << 0 << hex << uppercase << Tid;
+        return ss.str();
     }
     rc = nacpGetLanguageEntry(&appControlData.nacp, &languageEntry);
     if (R_FAILED(rc))
     {
-        return "null2";
+        stringstream ss;
+        ss << 0 << hex << uppercase << Tid;
+        return ss.str();
     }
     return string(languageEntry->name);
 }
 
-bool IsClkActive()
+bool isClkActive()
 {
-    pmdmntInitialize();
+    Result rc;
     u64 pid = 0;
-    pmdmntGetTitlePid(&pid, 0x00FF0000636C6BFF);
-    if (pid > 0)
+    rc = pmdmntGetTitlePid(&pid, sysClkTid);
+    if (pid < 0 || R_FAILED(rc))
+        return false;
+
+    return true;
+}
+
+bool areTempsEnabled()
+{
+    Ini *config = Ini::parseFile(configFile);
+    IniSection *section = config->findSection("value", false);
+    if (section != nullptr)
     {
-        pmdmntExit();
-        return true;
+        IniOption *option1 = section->findFirstOption("csv_write_interval_ms", false);
+        IniOption *option2 = section->findFirstOption("temp_log_interval_ms", false);
+        if (option1 != nullptr && option2 != nullptr)
+            if (option1->value != "0" && option2->value != "0")
+                return true;
     }
-    pmdmntExit();
     return false;
 }
 } // namespace Utils

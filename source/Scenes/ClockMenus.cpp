@@ -25,7 +25,7 @@ void CPUMenu::Display(u64 kDown)
 
     if (kDown & KEY_A)
     {
-        Utils::ChangeConfiguration(CPUClocks);
+        Utils::changeConfiguration(CPUClocks);
         scene = 2;
         selection = configSelected;
         printf(CONSOLE_ESC(2J));
@@ -72,7 +72,7 @@ void GPUMenu::Display(u64 kDown)
 
     if (kDown & KEY_A)
     {
-        Utils::ChangeConfiguration(GPUClocks);
+        Utils::changeConfiguration(GPUClocks);
         scene = 2;
         selection = configSelected;
         printf(CONSOLE_ESC(2J));
@@ -119,7 +119,7 @@ void MEMMenu::Display(u64 kDown)
 
     if (kDown & KEY_A)
     {
-        Utils::ChangeConfiguration(MEMClocks);
+        Utils::changeConfiguration(MEMClocks);
         scene = 2;
         selection = configSelected;
         printf(CONSOLE_ESC(2J));

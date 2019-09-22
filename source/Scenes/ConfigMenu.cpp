@@ -61,7 +61,7 @@ void ConfigMenu::Display(u64 kDown)
             Utils::printItems(MEMClocks, "MEM Clocks");
             break;
         case 15:
-            Utils::ResetConfig();
+            Utils::resetConfig();
             scene = 1;
             selection = gameSelected - (title_page * max_title_items);
             Utils::printTitles();
