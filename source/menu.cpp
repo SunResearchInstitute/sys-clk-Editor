@@ -30,8 +30,6 @@ void menuMainLoop()
         else
             firstMenuItems[2] = "sys-clk is disabled!";
 
-        //TODO: find value settings for temp shit
-
         Utils::printItems(firstMenuItems, "Main Menu");
     }
 
