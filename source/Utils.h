@@ -18,5 +18,4 @@ void printItems(const std::vector<std::string> &items, std::string menuTitle);
 void getAllConfigItems(std::string option, simpleIniParser::Ini *config, simpleIniParser::IniSection *Section, simpleIniParser::IniOption *Option);
 bool isClkActive();
 void resetConfig();
-bool areTempsEnabled();
 } // namespace Utils
