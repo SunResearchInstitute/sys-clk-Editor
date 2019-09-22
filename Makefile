@@ -45,7 +45,7 @@ INCLUDES	:=	include
 
 APP_TITLE   := sys-clk Editor
 APP_AUTHOR  := Sun
-APP_VERSION := 1.2.2
+APP_VERSION := 1.2.3
 #ROMFS	:=	romfs
 #---------------------------------------------------------------------------------
 # options for code generation
