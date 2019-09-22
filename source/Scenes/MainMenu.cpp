@@ -51,7 +51,7 @@ void MainMenu::Display(u64 kDown)
             needsRefresh = true;
             break;
         }
-        case 4:
+        case 3:
             fclose(fopen(configFile.c_str(), "w"));
             scene = 1;
             selection = 0;

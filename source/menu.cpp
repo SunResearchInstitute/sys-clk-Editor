@@ -13,7 +13,7 @@ int title_page = 0;
 int onscreen_items;
 std::vector<Title> titles;
 int maxTitlePages = titles.size() / max_title_items;
-std::vector<std::string> firstMenuItems{"Games", "PlaceHldr", "PlaceHldr", "PlaceHldr", "Delete Config"};
+std::vector<std::string> firstMenuItems{"Games", "PlaceHldr", "PlaceHldr", "Delete config"};
 
 void menuMainLoop()
 {
@@ -29,10 +29,6 @@ void menuMainLoop()
             firstMenuItems[2] = "sys-clk is enabled!";
         else
             firstMenuItems[2] = "sys-clk is disabled!";
-        if (!Utils::areTempsEnabled())
-            firstMenuItems[3] = "Toggle temp display: Disabled";
-        else
-            firstMenuItems[3] = "Toggle temp display: Enabled";
 
         //TODO: find value settings for temp shit
 
@@ -76,10 +72,6 @@ void menuMainLoop()
             return;
         }
         currentScene->Display(kDown);
-        if (scene == 0 && Utils::areTempsEnabled && filesystem::exists("sdmc:/config/sys-clk/context.csv"))
-        {
-            //TODO read CSV.
-        }
         delete currentScene;
         consoleUpdate(nullptr);
     }
