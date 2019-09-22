@@ -116,13 +116,4 @@ extern std::vector<Title> titles;
 extern int maxTitlePages;
 extern std::vector<std::string> firstMenuItems;
 
-void ChangeConfiguration(const std::vector<std::string> &vect);
-void printConfig(const std::vector<std::string> &configItems);
 void menuMainLoop();
-std::vector<Title> getAllTitles();
-std::string getAppName(u64 Tid);
-void printTitles();
-void printItems(const std::vector<std::string> &items, std::string menuTitle);
-void getAllConfigItems(std::string option, simpleIniParser::Ini *config, simpleIniParser::IniSection *Section, simpleIniParser::IniOption *Option);
-bool IsClkActive();
-void ResetConfig();

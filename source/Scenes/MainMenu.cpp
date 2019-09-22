@@ -34,7 +34,7 @@ void MainMenu::Display(u64 kDown)
             scene = 1;
             selection = 0;
             printf(CONSOLE_ESC(2J));
-            printTitles();
+            Utils::printTitles();
             break;
         case 1:
         {
@@ -56,12 +56,11 @@ void MainMenu::Display(u64 kDown)
             scene = 1;
             selection = 0;
             printf(CONSOLE_ESC(2J));
-            printTitles();
+            Utils::printTitles();
             break;
         case 2:
         {
-            pmshellInitialize();
-            if (IsClkActive())
+            if (Utils::isClkActive())
             {
                 if (R_SUCCEEDED(pmshellTerminateProcessByTitleId(sysClkTid)))
                 {
@@ -78,7 +77,6 @@ void MainMenu::Display(u64 kDown)
                     fclose(fopen(boot2Flag.c_str(), "w"));
                 }
             }
-            pmshellExit();
             needsRefresh = true;
             break;
         }
@@ -88,9 +86,6 @@ void MainMenu::Display(u64 kDown)
     if (needsRefresh)
     {
         printf(CONSOLE_ESC(2J));
-        printItems(firstMenuItems, "Main Menu");
+        Utils::printItems(firstMenuItems, "Main Menu");
     }
-
-    if (kDown & KEY_B )
-        scene = -69;
 }

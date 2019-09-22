@@ -47,13 +47,13 @@ void TitleMenu::Display(u64 kDown)
         gameSelected = (title_page * max_title_items) + selection;
         selection = 0;
         printf(CONSOLE_ESC(2J));
-        printConfig(ConfigItems);
+        Utils::printConfig(ConfigItems);
     }
 
     if (needsRefresh)
     {
         printf(CONSOLE_ESC(2J));
-        printTitles();
+        Utils::printTitles();
     }
 
     if (kDown & KEY_B)
@@ -61,6 +61,6 @@ void TitleMenu::Display(u64 kDown)
         printf(CONSOLE_ESC(2J));
         scene = 0;
         selection = 0;
-        printItems(firstMenuItems, "Main Menu");
+        Utils::printItems(firstMenuItems, "Main Menu");
     }
 }
