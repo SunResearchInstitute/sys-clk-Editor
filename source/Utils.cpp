@@ -42,11 +42,12 @@ void ChangeConfiguration(const vector<string> &vect)
 
     if (config->findSection(buff, false) == nullptr)
     {
-        config->sections.push_back(new IniSection(SECTION, buff));
+        config->sections.push_back(new IniSection(IniSectionType::Section, buff));
     }
     if (config->findSection(buff, false)->findFirstOption(ConfigItems.at(configSelected)) == nullptr)
     {
-        config->findSection(buff, false)->options.push_back(new IniOption(ConfigItems.at(configSelected), vect.at(selection)));
+        
+        config->findSection(buff, false)->options.push_back(new IniOption(IniOptionType::Option, ConfigItems.at(configSelected), vect.at(selection)));
     }
     else
     {
@@ -55,7 +56,7 @@ void ChangeConfiguration(const vector<string> &vect)
     if (config->findSection(titles.at(gameSelected).TitleName, false) == nullptr)
     {
         vector<IniSection *>::iterator it = find(config->sections.begin(), config->sections.end(), config->findSection(buff, false));
-        config->sections.insert(it, new IniSection(SEMICOLON_COMMENT, titles.at(gameSelected).TitleName));
+        config->sections.insert(it, new IniSection(IniSectionType::SemicolonComment, titles.at(gameSelected).TitleName));
     }
     config->writeToFile(configFile);
     delete config;
