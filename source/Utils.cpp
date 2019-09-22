@@ -12,10 +12,10 @@ namespace Utils
 {
 void Log(string str)
 {
-    fstream myfile;
-    myfile.open("sdmc:/editor-debug.log", fstream::app | fstream::in);
-    myfile << str << "\n";
-    myfile.close();
+    str += "\n";
+    FILE *f = fopen("sdmc:/editor-debug.log", "a");
+    fwrite(str.c_str(), sizeof(char), strlen(str.c_str()), f);
+    fclose(f);
 }
 
 void ResetConfig()
@@ -46,7 +46,7 @@ void ChangeConfiguration(const vector<string> &vect)
     }
     if (config->findSection(buff, false)->findFirstOption(ConfigItems.at(configSelected)) == nullptr)
     {
-        
+
         config->findSection(buff, false)->options.push_back(new IniOption(IniOptionType::Option, ConfigItems.at(configSelected), vect.at(selection)));
     }
     else
@@ -168,8 +168,11 @@ vector<Title> getAllTitles()
     apps.push_back(qlaunch);
     for (u32 i = 0; i < actualAppRecordCnt; i++)
     {
-        Utils::Log("tid: " + to_string(appRecords[i].titleID));
-        Utils::Log("Title" + getAppName(appRecords[i].titleID));
+        char buffer[20];
+        sprintf(buffer, "%016lx", appRecords[i].titleID);
+        string str(buffer);
+        Utils::Log("TID: " + str);
+        Utils::Log("Title: " + getAppName(appRecords[i].titleID));
         Title title;
         title.TitleID = appRecords[i].titleID;
         title.TitleName = getAppName(appRecords[i].titleID);
@@ -192,12 +195,12 @@ string getAppName(u64 Tid)
     rc = nsGetApplicationControlData(1, Tid, &appControlData, sizeof(NsApplicationControlData), &appControlDataSize);
     if (R_FAILED(rc))
     {
-        return "null";
+        return "null1";
     }
     rc = nacpGetLanguageEntry(&appControlData.nacp, &languageEntry);
     if (R_FAILED(rc))
     {
-        return "null";
+        return "null2";
     }
     return string(languageEntry->name);
 }
