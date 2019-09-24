@@ -42,23 +42,16 @@ void changeConfiguration(const vector<string> &vect)
         config->sections.push_back(new IniSection(IniSectionType::Section, buff));
         section = config->findSection(buff, false);
     }
-    if (section->findFirstOption(ConfigItems.at(configSelected)) == nullptr)
-    {
 
+    if (section->findFirstOption(ConfigItems.at(configSelected)) == nullptr)
         section->options.push_back(new IniOption(IniOptionType::Option, ConfigItems.at(configSelected), vect.at(selection)));
-    }
+
     else
-    {
         section->findFirstOption(ConfigItems.at(configSelected))->value = vect.at(selection);
-    }
-    //This broke in a more recent SimpleIniParser commit
-    /*
-    if (config->findSection(titles.at(gameSelected).TitleName, false) == nullptr)
-    {
-        vector<IniSection *>::iterator it = find(config->sections.begin(), config->sections.end(), config->findSection(buff, false));
-        config->sections.insert(it, new IniSection(IniSectionType::SemicolonComment, titles.at(gameSelected).TitleName));
-    }
-    */
+
+    if (section->findFirstOption(titles.at(gameSelected).TitleName, false, IniOptionType::SemicolonComment, IniOptionSearchField::Value) == nullptr)
+        section->options.insert(section->options.begin(), new IniOption(IniOptionType::SemicolonComment, "", titles.at(gameSelected).TitleName));
+
     config->writeToFile(configFile);
     delete config;
 }
