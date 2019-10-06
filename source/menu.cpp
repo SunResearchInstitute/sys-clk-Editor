@@ -17,8 +17,12 @@ std::vector<std::string> firstMenuItems{"Games", "PlaceHldr", "PlaceHldr", "Dele
 
 void menuMainLoop()
 {
+    Scene *currentScene;
+    int lastScene = scene;
     if (scene == 0)
     {
+        currentScene = new MainMenu();
+
         if (!filesystem::exists(logFlag))
             firstMenuItems[1] = "Toggle sys-clk Logging: Disabled";
         else
@@ -32,8 +36,8 @@ void menuMainLoop()
         Utils::printItems(firstMenuItems, "Main Menu");
         titles = Utils::getAllTitles();
     }
-    Scene *currentScene;
-    int lastScene = scene;
+    else
+        return;
 
     while (appletMainLoop())
     {
