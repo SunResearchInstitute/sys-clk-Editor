@@ -12,18 +12,17 @@ int main(int argc, char **argv)
     //this is C++ we should use nullptr instead
     consoleInit(nullptr);
 
+    //TODO: print rc instead
     Result rc;
     rc = pmshellInitialize();
     if (R_FAILED(rc))
-        Utils::printError("PMSHELL failed to start!");
+        Utils::startErrorScreen(rc);
     rc = pmdmntInitialize();
     if (R_FAILED(rc))
-        Utils::printError("PMDMNT failed to start!");
+        Utils::startErrorScreen(rc);
     rc = nsInitialize();
     if (R_FAILED(rc))
-        Utils::printError("NS failed to start!");
-    else
-        titles = Utils::getAllTitles();
+        Utils::startErrorScreen(rc);
 
     //SimpleIniParser May or may not need the file to exist so we will create it anyways
     if (!filesystem::exists(configFile))

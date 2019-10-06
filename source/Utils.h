@@ -8,7 +8,7 @@
 
 namespace Utils
 {
-void printError(std::string str);
+void startErrorScreen(Result rc);
 void changeConfiguration(const std::vector<std::string> &vect);
 void printConfig(const std::vector<std::string> &configItems);
 std::vector<Title> getAllTitles();

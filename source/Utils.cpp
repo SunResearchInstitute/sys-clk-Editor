@@ -8,10 +8,23 @@ using namespace simpleIniParser;
 
 namespace Utils
 {
-void printError(string str)
+void startErrorScreen(Result rc)
 {
-    scene = -1;
-    printf(CONSOLE_RED "\x1b[22;%dH%s", center(80, str.size()), str.c_str());
+    char str[35];
+    sprintf(str, "Error: 0x%x", rc);
+    printf(CONSOLE_RED "\x1b[21;%d%s", center(80, (int)strlen(str)), str);
+    printf(CONSOLE_RED "\x1b[22;%dPress `+` to exit!", center(80, 17));
+    consoleUpdate(nullptr);
+    while (appletMainLoop())
+    {
+        hidScanInput();
+        u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
+        if (kDown & KEY_PLUS)
+        {
+            consoleExit(nullptr);
+            scene = -69;
+        }
+    }
 }
 
 void resetConfig()
@@ -153,7 +166,7 @@ vector<Title> getAllTitles()
     rc = nsListApplicationRecord(appRecords, sizeof(NsApplicationRecord) * 1024, 0, &actualAppRecordCnt);
     if (R_FAILED(rc))
     {
-        Utils::printError("Failed to get Applications!");
+        Utils::startErrorScreen(rc);
         return apps;
     }
 
@@ -168,7 +181,7 @@ vector<Title> getAllTitles()
         title.TitleName = getAppName(appRecords[i].titleID);
         apps.push_back(title);
     }
-    delete appRecords;
+    delete[] appRecords;
     return apps;
 }
 
