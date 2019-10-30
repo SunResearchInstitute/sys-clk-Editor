@@ -43,6 +43,7 @@ void menuMainLoop()
     {
         if (lastScene != scene)
         {
+            delete currentScene;
             switch (scene)
             {
             case 0:
@@ -66,6 +67,7 @@ void menuMainLoop()
             default:
                 return;
             }
+            lastScene = scene;
         }
 
         hidScanInput();
@@ -77,11 +79,6 @@ void menuMainLoop()
             return;
         }
         currentScene->Display(kDown);
-        if (lastScene != scene)
-        {
-            lastScene = scene;
-            delete currentScene;
-        }
         consoleUpdate(nullptr);
     }
 }
