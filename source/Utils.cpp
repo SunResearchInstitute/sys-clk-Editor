@@ -153,10 +153,9 @@ vector<Title> getAllTitles()
 {
     vector<Title> apps;
     NsApplicationRecord *appRecords = new NsApplicationRecord[1024]; // Nobody's going to have more than 1024 games hopefully...
-    size_t actualAppRecordCnt = 0;
+    s32 actualAppRecordCnt = 0;
     Result rc;
-
-    rc = nsListApplicationRecord(appRecords, sizeof(NsApplicationRecord) * 1024, 0, &actualAppRecordCnt);
+    rc = nsListApplicationRecord(appRecords, 1024, 0, &actualAppRecordCnt);
     if (R_FAILED(rc))
     {
         Utils::startErrorScreen(rc);
@@ -167,7 +166,7 @@ vector<Title> getAllTitles()
     qlaunch.TitleID = 0x0100000000001000;
     qlaunch.TitleName = "qlaunch";
     apps.push_back(qlaunch);
-    for (u32 i = 0; i < actualAppRecordCnt; i++)
+    for (s32 i = 0; i < actualAppRecordCnt; i++)
     {
         Title title;
         title.TitleID = appRecords[i].titleID;
@@ -187,7 +186,7 @@ string getAppName(u64 Tid)
 
     memset(&appControlData, 0x00, sizeof(NsApplicationControlData));
 
-    rc = nsGetApplicationControlData(1, Tid, &appControlData, sizeof(NsApplicationControlData), &appControlDataSize);
+    rc = nsGetApplicationControlData(NsApplicationControlSource_Storage, Tid, &appControlData, sizeof(NsApplicationControlData), &appControlDataSize);
     if (R_FAILED(rc))
     {
         stringstream ss;
@@ -208,7 +207,7 @@ bool isClkActive()
 {
     Result rc;
     u64 pid = 0;
-    rc = pmdmntGetTitlePid(&pid, sysClkTid);
+    rc = pmdmntGetProcessId(&pid, sysClkTid);
     if (pid < 0 || R_FAILED(rc))
         return false;
 
