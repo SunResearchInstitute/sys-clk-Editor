@@ -153,7 +153,7 @@ vector<Title> getAllTitles()
 {
     vector<Title> apps;
     NsApplicationRecord *appRecords = new NsApplicationRecord[1024]; // Nobody's going to have more than 1024 games hopefully...
-    s32 actualAppRecordCnt = 0;
+    size_t actualAppRecordCnt = 0;
     Result rc;
     rc = nsListApplicationRecord(appRecords, 1024, 0, &actualAppRecordCnt);
     if (R_FAILED(rc))
@@ -166,7 +166,7 @@ vector<Title> getAllTitles()
     qlaunch.TitleID = 0x0100000000001000;
     qlaunch.TitleName = "qlaunch";
     apps.push_back(qlaunch);
-    for (s32 i = 0; i < actualAppRecordCnt; i++)
+    for (u32 i = 0; i < actualAppRecordCnt; i++)
     {
         Title title;
         title.TitleID = appRecords[i].titleID;
@@ -186,7 +186,7 @@ string getAppName(u64 Tid)
 
     memset(&appControlData, 0x00, sizeof(NsApplicationControlData));
 
-    rc = nsGetApplicationControlData(NsApplicationControlSource_Storage, Tid, &appControlData, sizeof(NsApplicationControlData), &appControlDataSize);
+    rc = nsGetApplicationControlData(1, Tid, &appControlData, sizeof(NsApplicationControlData), &appControlDataSize);
     if (R_FAILED(rc))
     {
         stringstream ss;
@@ -207,25 +207,10 @@ bool isClkActive()
 {
     Result rc;
     u64 pid = 0;
-    rc = pmdmntGetProcessId(&pid, sysClkTid);
+    rc = pmdmntGetTitlePid(&pid, sysClkTid);
     if (pid < 0 || R_FAILED(rc))
         return false;
 
     return true;
-}
-
-bool areTempsEnabled()
-{
-    Ini *config = Ini::parseFile(configFile);
-    IniSection *section = config->findSection("value", false);
-    if (section != nullptr)
-    {
-        IniOption *option1 = section->findFirstOption("csv_write_interval_ms", false);
-        IniOption *option2 = section->findFirstOption("temp_log_interval_ms", false);
-        if (option1 != nullptr && option2 != nullptr)
-            if (option1->value != "0" && option2->value != "0")
-                return true;
-    }
-    return false;
 }
 } // namespace Utils

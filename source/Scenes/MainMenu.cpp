@@ -62,7 +62,7 @@ void MainMenu::Display(u64 kDown)
         {
             if (Utils::isClkActive())
             {
-                if (R_SUCCEEDED(pmshellTerminateProgram(sysClkTid)))
+                if (R_SUCCEEDED(pmshellTerminateProcessByTitleId(sysClkTid)))
                 {
                     firstMenuItems[2] = "sys-clk is disabled!";
                     remove(boot2Flag.c_str());
@@ -71,8 +71,7 @@ void MainMenu::Display(u64 kDown)
             else
             {
                 u64 pid;
-                NcmProgramLocation location = { sysClkTid, FsStorageId_None, { 0 } };
-                if (R_SUCCEEDED(pmshellLaunchProgram(0, &location , &pid)))
+                if (R_SUCCEEDED(pmshellLaunchProcess(0, sysClkTid, FsStorageId_None, &pid)))
                 {
                     firstMenuItems[2] = "sys-clk is enabled!";
                     fclose(fopen(boot2Flag.c_str(), "w"));
