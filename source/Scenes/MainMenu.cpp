@@ -1,5 +1,6 @@
 #include "MainMenu.h"
 #include <filesystem>
+#include <sys/stat.h>
 
 using namespace std;
 
@@ -38,21 +39,21 @@ void MainMenu::Display(u64 kDown)
             break;
         case 1:
         {
-            if (!filesystem::exists(logFlag))
+            if (!filesystem::exists(LOG))
             {
-                fclose(fopen(logFlag.c_str(), "w"));
+                fclose(fopen(LOG, "w"));
                 firstMenuItems[1] = "Toggle sys-clk Logging: Enabled";
             }
             else
             {
-                remove(logFlag.c_str());
+                remove(LOG);
                 firstMenuItems[1] = "Toggle sys-clk Logging: Disabled";
             }
             needsRefresh = true;
             break;
         }
         case 3:
-            fclose(fopen(configFile.c_str(), "w"));
+            fclose(fopen(LOG, "w"));
             scene = 1;
             selection = 0;
             printf(CONSOLE_ESC(2J));
@@ -62,19 +63,24 @@ void MainMenu::Display(u64 kDown)
         {
             if (Utils::isClkActive())
             {
-                if (R_SUCCEEDED(pmshellTerminateProcessByTitleId(sysClkTid)))
+                if (R_SUCCEEDED(pmshellTerminateProgram(sysClkTid)))
                 {
                     firstMenuItems[2] = "sys-clk is disabled!";
-                    remove(boot2Flag.c_str());
+                    remove(BOOT2FLAG);
                 }
             }
             else
             {
+                NcmProgramLocation programLocation{
+                    .program_id = sysClkTid,
+                    .storageID = NcmStorageId_None,
+                };
                 u64 pid;
-                if (R_SUCCEEDED(pmshellLaunchProcess(0, sysClkTid, FsStorageId_None, &pid)))
+                if (R_SUCCEEDED(pmshellLaunchProgram(0, &programLocation, &pid)))
                 {
                     firstMenuItems[2] = "sys-clk is enabled!";
-                    fclose(fopen(boot2Flag.c_str(), "w"));
+                    mkdir(FLAGFOLDER, 0777);
+                    fclose(fopen(BOOT2FLAG, "w"));
                 }
             }
             needsRefresh = true;

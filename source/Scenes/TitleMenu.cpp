@@ -29,7 +29,7 @@ void TitleMenu::Display(u64 kDown)
 
     //Underflow/Overflow check
     int start = title_page * max_title_items;
-    int end = std::min(static_cast<int>(titles.size()), start + max_title_items);
+    int end = std::min((int)(titles.size()), start + max_title_items);
     onscreen_items = end - start;
     if (selection < 0)
         selection = onscreen_items - 1;

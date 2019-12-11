@@ -101,9 +101,10 @@ const std::vector<std::string> GPUCmt{
     "",
     "-> use default clock"};
 const int max_title_items = 43;
-const std::string logFlag = "sdmc:/config/sys-clk/log.flag";
-const std::string configFile = "sdmc:/config/sys-clk/config.ini";
-const std::string boot2Flag = "sdmc:/atmosphere/titles/00FF0000636C6BFF/flags/boot2.flag";
+#define LOG "sdmc:/config/sys-clk/log.flag"
+#define CONFIG "sdmc:/config/sys-clk/config.ini"
+#define FLAGFOLDER "sdmc:/atmosphere/contents/00FF0000636C6BFF/flags/"
+#define BOOT2FLAG FLAGFOLDER "boot2.flag"
 const u64 sysClkTid = 0x00FF0000636C6BFF;
 
 extern signed int selection;

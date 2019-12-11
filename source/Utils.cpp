@@ -32,12 +32,12 @@ void resetConfig()
     stringstream ss;
     ss << 0 << hex << uppercase << titles.at(gameSelected).TitleID;
     auto buff = ss.str();
-    Ini *config = Ini::parseFile(configFile);
+    Ini *config = Ini::parseFile(CONFIG);
     if (config->findSection(buff, false) != nullptr)
     {
         vector<IniSection *>::iterator it = find(config->sections.begin(), config->sections.end(), config->findSection(buff, false));
         config->sections.erase(it);
-        config->writeToFile(configFile);
+        config->writeToFile(CONFIG);
     }
     delete config;
 }
@@ -47,7 +47,7 @@ void changeConfiguration(const vector<string> &vect)
     stringstream ss;
     ss << 0 << hex << uppercase << titles.at(gameSelected).TitleID;
     auto buff = ss.str();
-    Ini *config = Ini::parseFile(configFile);
+    Ini *config = Ini::parseFile(CONFIG);
 
     IniSection *section = config->findSection(buff, false);
     if (section == nullptr)
@@ -65,7 +65,7 @@ void changeConfiguration(const vector<string> &vect)
     if (section->findFirstOption(titles.at(gameSelected).TitleName, false, IniOptionType::SemicolonComment, IniOptionSearchField::Value) == nullptr)
         section->options.insert(section->options.begin(), new IniOption(IniOptionType::SemicolonComment, "", titles.at(gameSelected).TitleName));
 
-    config->writeToFile(configFile);
+    config->writeToFile(CONFIG);
     delete config;
 }
 
@@ -120,7 +120,7 @@ void printConfig(const vector<string> &configItems)
     ss << 0 << hex << uppercase << title.TitleID << ": " << title.TitleName;
     string buff = ss.str();
     printf(CONSOLE_MAGENTA "\x1b[0;%dH%s\n", center(80, buff.size()), buff.c_str());
-    Ini *config = Ini::parseFile(configFile);
+    Ini *config = Ini::parseFile(CONFIG);
     stringstream ss2;
     ss2 << 0 << hex << uppercase << title.TitleID;
     buff = ss2.str();
@@ -153,7 +153,7 @@ vector<Title> getAllTitles()
 {
     vector<Title> apps;
     NsApplicationRecord *appRecords = new NsApplicationRecord[1024]; // Nobody's going to have more than 1024 games hopefully...
-    size_t actualAppRecordCnt = 0;
+    s32 actualAppRecordCnt = 0;
     Result rc;
     rc = nsListApplicationRecord(appRecords, 1024, 0, &actualAppRecordCnt);
     if (R_FAILED(rc))
@@ -166,11 +166,11 @@ vector<Title> getAllTitles()
     qlaunch.TitleID = 0x0100000000001000;
     qlaunch.TitleName = "qlaunch";
     apps.push_back(qlaunch);
-    for (u32 i = 0; i < actualAppRecordCnt; i++)
+    for (s32 i = 0; i < actualAppRecordCnt; i++)
     {
         Title title;
-        title.TitleID = appRecords[i].titleID;
-        title.TitleName = getAppName(appRecords[i].titleID);
+        title.TitleID = appRecords[i].application_id;
+        title.TitleName = getAppName(appRecords[i].application_id);
         apps.push_back(title);
     }
     delete[] appRecords;
@@ -185,8 +185,8 @@ string getAppName(u64 Tid)
     Result rc;
 
     memset(&appControlData, 0x00, sizeof(NsApplicationControlData));
-
-    rc = nsGetApplicationControlData(1, Tid, &appControlData, sizeof(NsApplicationControlData), &appControlDataSize);
+    
+    rc = nsGetApplicationControlData(NsApplicationControlSource::NsApplicationControlSource_Storage, Tid, &appControlData, sizeof(NsApplicationControlData), &appControlDataSize);
     if (R_FAILED(rc))
     {
         stringstream ss;
@@ -207,7 +207,7 @@ bool isClkActive()
 {
     Result rc;
     u64 pid = 0;
-    rc = pmdmntGetTitlePid(&pid, sysClkTid);
+    rc = pmdmntGetProcessId(&pid, sysClkTid);
     if (pid < 0 || R_FAILED(rc))
         return false;
 

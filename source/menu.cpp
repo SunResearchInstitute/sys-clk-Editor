@@ -23,7 +23,7 @@ void menuMainLoop()
     {
         currentScene = new MainMenu();
 
-        if (!filesystem::exists(logFlag))
+        if (!filesystem::exists(LOG))
             firstMenuItems[1] = "Toggle sys-clk Logging: Disabled";
         else
             firstMenuItems[1] = "Toggle sys-clk Logging: Enabled";
