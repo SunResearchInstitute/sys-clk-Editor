@@ -36,16 +36,16 @@ void TitleMenu::Update(StateMachine &stateMachine, u64 kDown)
 
     if (kDown & KEY_A)
     {
-        //TODO: reimplement this with state machine
         Utils::gameSelected = (Utils::title_page * max_title_items) + selection;
         stateMachine.PushState("config");
+        return;
     }
 
     Utils::printTitles(selection);
 
     if (kDown & KEY_B)
     {
-        //TODO: reimplement this with state machine
         stateMachine.PushState("main");
+        return;
     }
 }

@@ -31,31 +31,27 @@ void ConfigMenu::Update(StateMachine &stateMachine, u64 kDown)
         case 6:
         case 9:
         case 12:
-            //TODO: reimplement this with state machine
             stateMachine.PushState("cpu");
-            break;
+            return;
         //GPU
         case 1:
         case 4:
         case 7:
         case 10:
         case 13:
-            //TODO: reimplement this with state machine
             stateMachine.PushState("gpu");
-            break;
+            return;
         //MEM
         case 2:
         case 5:
         case 8:
         case 11:
         case 14:
-            //TODO: reimplement this with state machine
             stateMachine.PushState("mem");
-            break;
+            return;
         case 15:
-            //TODO: reimplement this with state machine
             stateMachine.PushState("title");
-            break;
+            return;
         default:
             break;
         }
@@ -65,7 +61,7 @@ void ConfigMenu::Update(StateMachine &stateMachine, u64 kDown)
 
     if (kDown & KEY_B)
     {
-        //TODO: reimplement this with state machine
         stateMachine.PushState("title");
+        return;
     }
 }

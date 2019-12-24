@@ -32,9 +32,8 @@ void MainMenu::Update(StateMachine &stateMachine, u64 kDown)
         switch (selection)
         {
         case 0:
-            //TODO: reimplement this with state machine
             stateMachine.PushState("title");
-            break;
+            return;
         case 1:
         {
             if (!filesystem::exists(LOG))

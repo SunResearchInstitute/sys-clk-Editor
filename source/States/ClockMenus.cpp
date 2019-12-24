@@ -20,17 +20,17 @@ void CPUMenu::Update(StateMachine &stateMachine, u64 kDown)
 
     if (kDown & KEY_A)
     {
-        //TODO: reimplement this with state machine
         Utils::changeConfiguration(CPUClocks, selection);
         stateMachine.PushState("config");
+        return;
     }
 
     Utils::printItems(CPUClocks, "CPU Clocks", selection);
 
     if (kDown & KEY_B)
     {
-        //TODO: reimplement this with state machine
         stateMachine.PushState("config");
+        return;
     }
 }
 
@@ -54,17 +54,17 @@ void GPUMenu::Update(StateMachine &stateMachine, u64 kDown)
 
     if (kDown & KEY_A)
     {
-        //TODO: reimplement this with state machine
         Utils::changeConfiguration(GPUClocks, selection);
         stateMachine.PushState("config");
+        return;
     }
 
     Utils::printItems(GPUClocks, "GPU Clocks", selection);
 
     if (kDown & KEY_B)
     {
-        //TODO: reimplement this with state machine
         stateMachine.PushState("config");
+        return;
     }
 }
 
@@ -88,16 +88,16 @@ void MEMMenu::Update(StateMachine &stateMachine, u64 kDown)
 
     if (kDown & KEY_A)
     {
-        //TODO: reimplement this with state machine
         Utils::changeConfiguration(MEMClocks, selection);
         stateMachine.PushState("config");
+        return;
     }
 
     Utils::printItems(MEMClocks, "MEM Clocks", selection);
 
     if (kDown & KEY_B)
     {
-        //TODO: reimplement this with state machine
         stateMachine.PushState("config");
+        return;
     }
 }
