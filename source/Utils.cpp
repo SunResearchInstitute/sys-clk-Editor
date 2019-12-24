@@ -2,30 +2,21 @@
 #include <sstream>
 #include <algorithm>
 #include <cstring>
+#include <filesystem>
+#include "States/ErrorMenu.h"
 
 using namespace std;
 using namespace simpleIniParser;
 
 namespace Utils
 {
-void startErrorScreen(Result rc)
-{
-    char str[35];
-    sprintf(str, "Error: 0x%x", rc);
-    printf(CONSOLE_RED "\x1b[21;%d%s", center(80, (int)strlen(str)), str);
-    printf(CONSOLE_RED "\x1b[22;%dPress `+` to exit!", center(80, 17));
-    consoleUpdate(nullptr);
-    while (appletMainLoop())
-    {
-        hidScanInput();
-        u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
-        if (kDown & KEY_PLUS)
-        {
-            consoleExit(nullptr);
-            scene = -69;
-        }
-    }
-}
+
+int gameSelected;
+int configSelected = 0;
+int title_page = 0;
+int onscreen_items;
+std::vector<Title> titles;
+int maxTitlePages = titles.size() / max_title_items;
 
 void resetConfig()
 {
@@ -42,7 +33,7 @@ void resetConfig()
     delete config;
 }
 
-void changeConfiguration(const vector<string> &vect)
+void changeConfiguration(const vector<string> &vect, int selection)
 {
     stringstream ss;
     ss << 0 << hex << uppercase << titles.at(gameSelected).TitleID;
@@ -70,8 +61,9 @@ void changeConfiguration(const vector<string> &vect)
 }
 
 //Thanks WerWolv :)
-void printTitles()
+void printTitles(int selection)
 {
+    consoleClear();
     printf(CONSOLE_MAGENTA "\x1b[0;36HGame List\n");
     int start = title_page * max_title_items;
     int end = std::min(static_cast<int>(titles.size()), start + max_title_items);
@@ -88,8 +80,9 @@ void printTitles()
     printf(CONSOLE_MAGENTA "Page %d/%d", title_page + 1, maxTitlePages + 1);
 }
 
-void printItems(const vector<string> &items, string menuTitle)
+void printItems(const vector<string> &items, string menuTitle, int selection)
 {
+    consoleClear();
     printf(CONSOLE_MAGENTA "\x1b[0;%dH%s\n", center(80, menuTitle.size()), menuTitle.c_str());
     for (int i = 0; i < (int)items.size(); i++)
     {
@@ -113,8 +106,9 @@ void printItems(const vector<string> &items, string menuTitle)
     }
 }
 
-void printConfig(const vector<string> &configItems)
+void printConfig(const vector<string> &configItems, int selection)
 {
+    consoleClear();
     Title title = titles.at(gameSelected);
     stringstream ss;
     ss << 0 << hex << uppercase << title.TitleID << ": " << title.TitleName;
@@ -158,7 +152,7 @@ vector<Title> getAllTitles()
     rc = nsListApplicationRecord(appRecords, 1024, 0, &actualAppRecordCnt);
     if (R_FAILED(rc))
     {
-        Utils::startErrorScreen(rc);
+        ErrorMenu::error = rc;
         return apps;
     }
 
@@ -203,14 +197,26 @@ string getAppName(u64 Tid)
     return string(languageEntry->name);
 }
 
-bool isClkActive()
+ClkState getClkState()
 {
-    Result rc;
+    ClkState clkState;
     u64 pid = 0;
-    rc = pmdmntGetProcessId(&pid, sysClkTid);
-    if (pid < 0 || R_FAILED(rc))
-        return false;
 
-    return true;
+    if (R_SUCCEEDED(pmdmntGetProcessId(&pid, sysClkTid)))
+    {
+        if (pid > 0)
+            //note that this returns instantly
+            //because the file might not exist but still be running
+            return ClkState::Enabled;
+        else
+            clkState = ClkState::Error;
+    }
+    else
+        clkState = ClkState::Disabled;
+
+    if (!filesystem::exists(PROGRAMDIR))
+        clkState = ClkState::NotFound;
+
+    return clkState;
 }
 } // namespace Utils
