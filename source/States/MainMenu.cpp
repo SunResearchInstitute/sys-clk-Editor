@@ -37,14 +37,18 @@ void MainMenu::Update(StateMachine &stateMachine, u64 kDown)
         case 1:
         {
             if (!filesystem::exists(LOG))
+            {
+                mkdir(CONFIGDIR, 0777);
                 fclose(fopen(LOG, "w"));
+            }
             else
                 remove(LOG);
 
             break;
         }
         case 3:
-            fclose(fopen(CONFIG, "w"));
+            mkdir(CONFIGDIR, 0777);
+            fclose(fopen(CONFIG_INI, "w"));
             break;
         case 2:
         {
@@ -100,7 +104,7 @@ void MainMenu::UpdateItems()
         break;
     }
 
-    if (filesystem::exists(CONFIG) && filesystem::file_size(CONFIG) > 0)
+    if (filesystem::exists(CONFIG_INI) && filesystem::file_size(CONFIG_INI) > 0)
         menuItems[3] = "Clear config";
     else
         menuItems[3] = "Config is cleared";

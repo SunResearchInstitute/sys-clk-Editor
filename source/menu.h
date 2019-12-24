@@ -101,9 +101,12 @@ const std::vector<std::string> GPUCmt{
     "",
     "-> use default clock"};
 const int max_title_items = 43;
-#define LOG "sdmc:/config/sys-clk/log.flag"
-#define CONFIG "sdmc:/config/sys-clk/config.ini"
+#define CONFIGDIR "sdmc:/config/sys-clk"
 #define CONTENTSDIR "sdmc:/atmosphere/contents/00FF0000636C6BFF"
+
+#define LOG CONFIGDIR "/log.flag"
+#define CONFIG_INI CONFIGDIR "/config.ini"
+
 #define PROGRAMDIR CONTENTSDIR "/exefs.nsp"
 #define FLAGSDIR CONTENTSDIR "/flags"
 #define BOOT2FLAG FLAGSDIR "/boot2.flag"

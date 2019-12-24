@@ -3,6 +3,7 @@
 #include "menu.h"
 #include <stdio.h>
 #include <filesystem>
+#include <sys/stat.h>
 
 #include "States/StateMachine.h"
 #include "States/States.h"
@@ -37,8 +38,8 @@ int main(int argc, char **argv)
     consoleInit(nullptr);
 
     //SimpleIniParser May or may not need the file to exist so we will create it anyways
-    if (!filesystem::exists(CONFIG))
-        fclose(fopen(CONFIG, "a"));
+    mkdir(CONFIGDIR, 0777);
+    fclose(fopen(CONFIG_INI, "a"));
 
     while (appletMainLoop())
     {

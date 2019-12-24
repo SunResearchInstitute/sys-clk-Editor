@@ -4,6 +4,7 @@
 #include <cstring>
 #include <filesystem>
 #include "States/ErrorMenu.h"
+#include <sys/stat.h>
 
 using namespace std;
 using namespace simpleIniParser;
@@ -23,12 +24,14 @@ void resetConfig()
     stringstream ss;
     ss << 0 << hex << uppercase << titles.at(gameSelected).TitleID;
     auto buff = ss.str();
-    Ini *config = Ini::parseFile(CONFIG);
+    mkdir(CONFIGDIR, 0777);
+    fclose(fopen(CONFIG_INI, "a"));
+    Ini *config = Ini::parseFile(CONFIG_INI);
     if (config->findSection(buff, false) != nullptr)
     {
         vector<IniSection *>::iterator it = find(config->sections.begin(), config->sections.end(), config->findSection(buff, false));
         config->sections.erase(it);
-        config->writeToFile(CONFIG);
+        config->writeToFile(CONFIG_INI);
     }
     delete config;
 }
@@ -38,7 +41,10 @@ void changeConfiguration(const vector<string> &vect, int selection)
     stringstream ss;
     ss << 0 << hex << uppercase << titles.at(gameSelected).TitleID;
     auto buff = ss.str();
-    Ini *config = Ini::parseFile(CONFIG);
+    mkdir(CONFIGDIR, 0777);
+    fclose(fopen(CONFIG_INI, "a"));
+    
+    Ini *config = Ini::parseFile(CONFIG_INI);
 
     IniSection *section = config->findSection(buff, false);
     if (section == nullptr)
@@ -56,7 +62,7 @@ void changeConfiguration(const vector<string> &vect, int selection)
     if (section->findFirstOption(titles.at(gameSelected).TitleName, false, IniOptionType::SemicolonComment, IniOptionSearchField::Value) == nullptr)
         section->options.insert(section->options.begin(), new IniOption(IniOptionType::SemicolonComment, "", titles.at(gameSelected).TitleName));
 
-    config->writeToFile(CONFIG);
+    config->writeToFile(CONFIG_INI);
     delete config;
 }
 
@@ -114,7 +120,9 @@ void printConfig(const vector<string> &configItems, int selection)
     ss << 0 << hex << uppercase << title.TitleID << ": " << title.TitleName;
     string buff = ss.str();
     printf(CONSOLE_MAGENTA "\x1b[0;%dH%s\n", center(80, buff.size()), buff.c_str());
-    Ini *config = Ini::parseFile(CONFIG);
+    mkdir(CONFIGDIR, 0777);
+    fclose(fopen(CONFIG_INI, "a"));
+    Ini *config = Ini::parseFile(CONFIG_INI);
     stringstream ss2;
     ss2 << 0 << hex << uppercase << title.TitleID;
     buff = ss2.str();
