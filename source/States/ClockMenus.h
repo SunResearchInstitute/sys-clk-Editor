@@ -4,13 +4,13 @@
 class MEMMenu : public State
 {
 public:
-    virtual void Enter() override {}
-    virtual void Update(StateMachine &, u64) override;
-    virtual void Exit() override {}
+    void Enter() override {}
+    void Update(StateMachine &, u64) override;
+    void Exit() override {}
 
-    virtual std::string Name() override { return "mem"; }
+    std::string Name() override { return "mem"; }
 
-    virtual ~MEMMenu() override {}
+    ~MEMMenu() override {}
 
 private:
     int selection = 0;
@@ -19,13 +19,13 @@ private:
 class GPUMenu : public State
 {
 public:
-    virtual void Enter() override {}
-    virtual void Update(StateMachine &, u64) override;
-    virtual void Exit() override {}
+    void Enter() override {}
+    void Update(StateMachine &, u64) override;
+    void Exit() override {}
 
-    virtual std::string Name() override { return "gpu"; }
+    std::string Name() override { return "gpu"; }
 
-    virtual ~GPUMenu() override {}
+    ~GPUMenu() override {}
 
 private:
     int selection = 0;
@@ -34,13 +34,13 @@ private:
 class CPUMenu : public State
 {
 public:
-    virtual void Enter() override {}
-    virtual void Update(StateMachine &, u64) override;
-    virtual void Exit() override {}
+    void Enter() override {}
+    void Update(StateMachine &, u64) override;
+    void Exit() override {}
 
-    virtual std::string Name() override { return "cpu"; }
+    std::string Name() override { return "cpu"; }
 
-    virtual ~CPUMenu() override {}
+    ~CPUMenu() override {}
 
 private:
     int selection = 0;
