@@ -2,52 +2,46 @@
 #include <sstream>
 #include <algorithm>
 #include <cstring>
+#include <filesystem>
+#include "States/ErrorMenu.h"
+#include <sys/stat.h>
 
 using namespace std;
 using namespace simpleIniParser;
 
 namespace Utils
 {
-void startErrorScreen(Result rc)
-{
-    char str[35];
-    sprintf(str, "Error: 0x%x", rc);
-    printf(CONSOLE_RED "\x1b[21;%d%s", center(80, (int)strlen(str)), str);
-    printf(CONSOLE_RED "\x1b[22;%dPress `+` to exit!", center(80, 17));
-    consoleUpdate(nullptr);
-    while (appletMainLoop())
-    {
-        hidScanInput();
-        u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
-        if (kDown & KEY_PLUS)
-        {
-            consoleExit(nullptr);
-            scene = -69;
-        }
-    }
-}
+int gameSelected;
+int configSelected = 0;
+std::vector<Title> titles;
+int maxTitlePages = titles.size() / max_title_items;
 
 void resetConfig()
 {
     stringstream ss;
     ss << 0 << hex << uppercase << titles.at(gameSelected).TitleID;
     auto buff = ss.str();
-    Ini *config = Ini::parseFile(CONFIG);
+    mkdir(CONFIGDIR, 0777);
+    fclose(fopen(CONFIG_INI, "a"));
+    Ini *config = Ini::parseFile(CONFIG_INI);
     if (config->findSection(buff, false) != nullptr)
     {
         vector<IniSection *>::iterator it = find(config->sections.begin(), config->sections.end(), config->findSection(buff, false));
         config->sections.erase(it);
-        config->writeToFile(CONFIG);
+        config->writeToFile(CONFIG_INI);
     }
     delete config;
 }
 
-void changeConfiguration(const vector<string> &vect)
+void changeConfiguration(const vector<string> &vect, int selection)
 {
     stringstream ss;
     ss << 0 << hex << uppercase << titles.at(gameSelected).TitleID;
     auto buff = ss.str();
-    Ini *config = Ini::parseFile(CONFIG);
+    mkdir(CONFIGDIR, 0777);
+    fclose(fopen(CONFIG_INI, "a"));
+    
+    Ini *config = Ini::parseFile(CONFIG_INI);
 
     IniSection *section = config->findSection(buff, false);
     if (section == nullptr)
@@ -65,15 +59,16 @@ void changeConfiguration(const vector<string> &vect)
     if (section->findFirstOption(titles.at(gameSelected).TitleName, false, IniOptionType::SemicolonComment, IniOptionSearchField::Value) == nullptr)
         section->options.insert(section->options.begin(), new IniOption(IniOptionType::SemicolonComment, "", titles.at(gameSelected).TitleName));
 
-    config->writeToFile(CONFIG);
+    config->writeToFile(CONFIG_INI);
     delete config;
 }
 
 //Thanks WerWolv :)
-void printTitles()
+void printTitles(int selection, int titlePage, int onScreenItems)
 {
+    consoleClear();
     printf(CONSOLE_MAGENTA "\x1b[0;36HGame List\n");
-    int start = title_page * max_title_items;
+    int start = titlePage * max_title_items;
     int end = std::min(static_cast<int>(titles.size()), start + max_title_items);
     int j = 0;
     for (int i = start; i < end; i++)
@@ -84,12 +79,13 @@ void printTitles()
         printf(CONSOLE_WHITE "%s%s\n", prefix, titles.at(i).TitleName.c_str());
         j++;
     }
-    onscreen_items = j;
-    printf(CONSOLE_MAGENTA "Page %d/%d", title_page + 1, maxTitlePages + 1);
+    onScreenItems = j;
+    printf(CONSOLE_MAGENTA "Page %d/%d", titlePage + 1, maxTitlePages + 1);
 }
 
-void printItems(const vector<string> &items, string menuTitle)
+void printItems(const vector<string> &items, string menuTitle, int selection)
 {
+    consoleClear();
     printf(CONSOLE_MAGENTA "\x1b[0;%dH%s\n", center(80, menuTitle.size()), menuTitle.c_str());
     for (int i = 0; i < (int)items.size(); i++)
     {
@@ -113,14 +109,17 @@ void printItems(const vector<string> &items, string menuTitle)
     }
 }
 
-void printConfig(const vector<string> &configItems)
+void printConfig(const vector<string> &configItems, int selection)
 {
+    consoleClear();
     Title title = titles.at(gameSelected);
     stringstream ss;
     ss << 0 << hex << uppercase << title.TitleID << ": " << title.TitleName;
     string buff = ss.str();
     printf(CONSOLE_MAGENTA "\x1b[0;%dH%s\n", center(80, buff.size()), buff.c_str());
-    Ini *config = Ini::parseFile(CONFIG);
+    mkdir(CONFIGDIR, 0777);
+    fclose(fopen(CONFIG_INI, "a"));
+    Ini *config = Ini::parseFile(CONFIG_INI);
     stringstream ss2;
     ss2 << 0 << hex << uppercase << title.TitleID;
     buff = ss2.str();
@@ -158,7 +157,7 @@ vector<Title> getAllTitles()
     rc = nsListApplicationRecord(appRecords, 1024, 0, &actualAppRecordCnt);
     if (R_FAILED(rc))
     {
-        Utils::startErrorScreen(rc);
+        ErrorMenu::error = rc;
         return apps;
     }
 
@@ -203,14 +202,26 @@ string getAppName(u64 Tid)
     return string(languageEntry->name);
 }
 
-bool isClkActive()
+ClkState getClkState()
 {
-    Result rc;
+    ClkState clkState;
     u64 pid = 0;
-    rc = pmdmntGetProcessId(&pid, sysClkTid);
-    if (pid < 0 || R_FAILED(rc))
-        return false;
 
-    return true;
+    if (R_SUCCEEDED(pmdmntGetProcessId(&pid, sysClkTid)))
+    {
+        if (pid > 0)
+            //note that this returns instantly
+            //because the file might not exist but still be running
+            return ClkState::Enabled;
+        else
+            clkState = ClkState::Error;
+    }
+    else
+        clkState = ClkState::Disabled;
+
+    if (!filesystem::exists(PROGRAMDIR))
+        clkState = ClkState::NotFound;
+
+    return clkState;
 }
 } // namespace Utils

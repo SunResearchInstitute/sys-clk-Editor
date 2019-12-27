@@ -101,20 +101,13 @@ const std::vector<std::string> GPUCmt{
     "",
     "-> use default clock"};
 const int max_title_items = 43;
-#define LOG "sdmc:/config/sys-clk/log.flag"
-#define CONFIG "sdmc:/config/sys-clk/config.ini"
-#define FLAGFOLDER "sdmc:/atmosphere/contents/00FF0000636C6BFF/flags/"
-#define BOOT2FLAG FLAGFOLDER "boot2.flag"
+#define CONFIGDIR "sdmc:/config/sys-clk"
+#define CONTENTSDIR "sdmc:/atmosphere/contents/00FF0000636C6BFF"
+
+#define LOG CONFIGDIR "/log.flag"
+#define CONFIG_INI CONFIGDIR "/config.ini"
+
+#define PROGRAMDIR CONTENTSDIR "/exefs.nsp"
+#define FLAGSDIR CONTENTSDIR "/flags"
+#define BOOT2FLAG FLAGSDIR "/boot2.flag"
 const u64 sysClkTid = 0x00FF0000636C6BFF;
-
-extern signed int selection;
-extern int gameSelected;
-extern int configSelected;
-extern int scene;
-extern int title_page;
-extern int onscreen_items;
-extern std::vector<Title> titles;
-extern int maxTitlePages;
-extern std::vector<std::string> firstMenuItems;
-
-void menuMainLoop();

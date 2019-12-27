@@ -39,7 +39,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	sys-clk-Editor
 BUILD		:=	build
-SOURCES		:=	source source/Scenes
+SOURCES		:=	source source/States
 DATA		:=	data
 INCLUDES	:=	include
 
