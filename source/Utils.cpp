@@ -40,7 +40,7 @@ void changeConfiguration(const vector<string> &vect, int selection)
     auto buff = ss.str();
     mkdir(CONFIGDIR, 0777);
     fclose(fopen(CONFIG_INI, "a"));
-    
+
     Ini *config = Ini::parseFile(CONFIG_INI);
 
     IniSection *section = config->findSection(buff, false);
@@ -184,7 +184,7 @@ string getAppName(u64 Tid)
     Result rc;
 
     memset(&appControlData, 0x00, sizeof(NsApplicationControlData));
-    
+
     rc = nsGetApplicationControlData(NsApplicationControlSource::NsApplicationControlSource_Storage, Tid, &appControlData, sizeof(NsApplicationControlData), &appControlDataSize);
     if (R_FAILED(rc))
     {

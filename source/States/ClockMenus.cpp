@@ -37,7 +37,6 @@ void GPUMenu::Update(StateMachine &stateMachine, u64 kDown)
 
     if (kDown & KEY_DOWN)
         selection++;
-    
 
     long int size = GPUClocks.size();
     if (selection < 0)
