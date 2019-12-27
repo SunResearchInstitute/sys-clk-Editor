@@ -9,4 +9,6 @@ public:
 
 private:
     int selection = 0;
+    int titlePage = 0;
+    int onScreenItems = 0;
 };

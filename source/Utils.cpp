@@ -11,11 +11,8 @@ using namespace simpleIniParser;
 
 namespace Utils
 {
-
 int gameSelected;
 int configSelected = 0;
-int title_page = 0;
-int onscreen_items;
 std::vector<Title> titles;
 int maxTitlePages = titles.size() / max_title_items;
 
@@ -67,11 +64,11 @@ void changeConfiguration(const vector<string> &vect, int selection)
 }
 
 //Thanks WerWolv :)
-void printTitles(int selection)
+void printTitles(int selection, int titlePage, int onScreenItems)
 {
     consoleClear();
     printf(CONSOLE_MAGENTA "\x1b[0;36HGame List\n");
-    int start = title_page * max_title_items;
+    int start = titlePage * max_title_items;
     int end = std::min(static_cast<int>(titles.size()), start + max_title_items);
     int j = 0;
     for (int i = start; i < end; i++)
@@ -82,8 +79,8 @@ void printTitles(int selection)
         printf(CONSOLE_WHITE "%s%s\n", prefix, titles.at(i).TitleName.c_str());
         j++;
     }
-    onscreen_items = j;
-    printf(CONSOLE_MAGENTA "Page %d/%d", title_page + 1, maxTitlePages + 1);
+    onScreenItems = j;
+    printf(CONSOLE_MAGENTA "Page %d/%d", titlePage + 1, maxTitlePages + 1);
 }
 
 void printItems(const vector<string> &items, string menuTitle, int selection)
