@@ -3,14 +3,10 @@
 void CPUMenu::Update(StateMachine &stateMachine, u64 kDown)
 {
     if (kDown & KEY_UP)
-    {
         selection--;
-    }
 
     if (kDown & KEY_DOWN)
-    {
         selection++;
-    }
 
     long int size = CPUClocks.size();
     if (selection < 0)
@@ -37,14 +33,11 @@ void CPUMenu::Update(StateMachine &stateMachine, u64 kDown)
 void GPUMenu::Update(StateMachine &stateMachine, u64 kDown)
 {
     if (kDown & KEY_UP)
-    {
         selection--;
-    }
 
     if (kDown & KEY_DOWN)
-    {
         selection++;
-    }
+    
 
     long int size = GPUClocks.size();
     if (selection < 0)
@@ -71,14 +64,10 @@ void GPUMenu::Update(StateMachine &stateMachine, u64 kDown)
 void MEMMenu::Update(StateMachine &stateMachine, u64 kDown)
 {
     if (kDown & KEY_UP)
-    {
         selection--;
-    }
 
     if (kDown & KEY_DOWN)
-    {
         selection++;
-    }
 
     long int size = MEMClocks.size();
     if (selection < 0)

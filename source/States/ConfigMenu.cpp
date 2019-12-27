@@ -1,17 +1,12 @@
 #include "ConfigMenu.h"
 
-
 void ConfigMenu::Update(StateMachine &stateMachine, u64 kDown)
 {
     if (kDown & KEY_UP)
-    {
         selection--;
-    }
 
     if (kDown & KEY_DOWN)
-    {
         selection++;
-    }
 
     // check for under/overflow
     long int size = ConfigItems.size();

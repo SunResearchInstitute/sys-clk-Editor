@@ -3,15 +3,8 @@
 
 class ErrorMenu : public State
 {
-    void Enter() override {}
-    void Update(StateMachine &, u64) override;
-    void Exit() override {}
-
-    std::string Name() override { return "error"; }
-
-    
-
-    ~ErrorMenu() override {}
+    virtual void Update(StateMachine &, u64);
+    virtual std::string Name() { return "error"; }
 
 public:
     static Result error;

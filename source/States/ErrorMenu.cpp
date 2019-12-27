@@ -4,7 +4,7 @@
 
 Result ErrorMenu::error = 0;
 
-void ErrorMenu::Update(StateMachine & stateMachine, u64 kDown)
+void ErrorMenu::Update(StateMachine &stateMachine, u64 kDown)
 {
     consoleClear();
     printf(CONSOLE_RED "Error: 0x%x\n", ErrorMenu::error);

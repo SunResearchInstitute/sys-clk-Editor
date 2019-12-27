@@ -12,9 +12,7 @@ void MainMenu::Enter()
 void MainMenu::Update(StateMachine &stateMachine, u64 kDown)
 {
     if (kDown & KEY_UP)
-    {
         selection--;
-    }
     if (kDown & KEY_DOWN)
     {
         selection++;

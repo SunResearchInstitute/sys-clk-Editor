@@ -3,22 +3,16 @@
 void TitleMenu::Update(StateMachine &stateMachine, u64 kDown)
 {
     if (kDown & KEY_UP)
-    {
         selection--;
-    }
+
     if (kDown & KEY_DOWN)
-    {
         selection++;
-    }
 
     if (kDown & KEY_LEFT)
-    {
         Utils::title_page--;
-    }
+
     if (kDown & KEY_RIGHT)
-    {
         Utils::title_page++;
-    }
 
     //Underflow/Overflow check
     int start = Utils::title_page * max_title_items;
