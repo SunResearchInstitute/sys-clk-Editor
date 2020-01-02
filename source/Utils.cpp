@@ -224,4 +224,14 @@ ClkState getClkState()
 
     return clkState;
 }
+
+u64 GetControllerInputs()
+{
+    hidScanInput();
+    u64 kDown = 0;
+    for (u8 controller = 0; controller < 10; controller++)
+        kDown |= hidKeysDown(static_cast<HidControllerID>(controller));
+
+    return kDown;
+}
 } // namespace Utils

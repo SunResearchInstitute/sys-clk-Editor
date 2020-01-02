@@ -30,4 +30,5 @@ void printItems(const std::vector<std::string> &items, std::string menuTitle, in
 void getAllConfigItems(std::string option, simpleIniParser::Ini *config, simpleIniParser::IniSection *Section, simpleIniParser::IniOption *Option);
 ClkState getClkState();
 void resetConfig();
+u64 GetControllerInputs();
 } // namespace Utils
