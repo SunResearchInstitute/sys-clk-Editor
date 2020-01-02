@@ -8,10 +8,10 @@
 
 enum class ClkState
 {
-    NotFound,
+    NotFound = -2,
     Error,
-    Enabled,
     Disabled,
+    Enabled
 };
 
 namespace Utils
