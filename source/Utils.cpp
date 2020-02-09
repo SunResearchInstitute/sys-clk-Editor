@@ -140,7 +140,7 @@ vector<Title> getAllTitles()
 {
     vector<Title> apps;
     NsApplicationRecord *appRecords = new NsApplicationRecord[1024]; // Nobody's going to have more than 1024 games hopefully...
-    size_t actualAppRecordCnt = 0;
+    int actualAppRecordCnt = 0;
     Result rc;
 
     rc = nsListApplicationRecord(appRecords, sizeof(NsApplicationRecord) * 1024, 0, &actualAppRecordCnt);
@@ -150,11 +150,15 @@ vector<Title> getAllTitles()
         return apps;
     }
 
+    Title systemDefault;
+    systemDefault.TitleID = 0x0999999999999999;
+    systemDefault.TitleName = "System-wide Default";
+    apps.push_back(systemDefault);
     Title qlaunch;
     qlaunch.TitleID = 0x0100000000001000;
     qlaunch.TitleName = "qlaunch";
     apps.push_back(qlaunch);
-    for (u32 i = 0; i < actualAppRecordCnt; i++)
+    for (int i = 0; i < actualAppRecordCnt; i++)
     {
         Title title;
         title.TitleID = appRecords[i].titleID;

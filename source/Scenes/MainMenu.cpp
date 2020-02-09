@@ -51,14 +51,29 @@ void MainMenu::Display(u64 kDown)
             needsRefresh = true;
             break;
         }
-        case 3:
+        case 2:
+        {
+            if (!filesystem::exists(boostFlag))
+            {
+                fclose(fopen(boostFlag.c_str(), "w"));
+                firstMenuItems[2] = "Allow Boost Mode to override clock settings: Enabled";
+            }
+            else
+            {
+                remove(boostFlag.c_str());
+                firstMenuItems[2] = "Allow Boost Mode to override clock settings: Disabled";
+            }
+            needsRefresh = true;
+            break;
+        }
+        case 4:
             fclose(fopen(configFile.c_str(), "w"));
             scene = 1;
             selection = 0;
             printf(CONSOLE_ESC(2J));
             Utils::printTitles();
             break;
-        case 2:
+        case 3:
         {
             if (Utils::isClkActive())
             {

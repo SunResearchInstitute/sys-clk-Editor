@@ -13,7 +13,7 @@ int title_page = 0;
 int onscreen_items;
 std::vector<Title> titles;
 int maxTitlePages = titles.size() / max_title_items;
-std::vector<std::string> firstMenuItems{"Games", "PlaceHldr", "PlaceHldr", "Delete config"};
+std::vector<std::string> firstMenuItems{"Games", "PlaceHldr", "PlaceHldr", "PlaceHldr", "Delete config"};
 
 void menuMainLoop()
 {
@@ -24,11 +24,16 @@ void menuMainLoop()
             firstMenuItems[1] = "Toggle sys-clk Logging: Disabled";
         else
             firstMenuItems[1] = "Toggle sys-clk Logging: Enabled";
+            
+        if (!filesystem::exists(boostFlag))
+            firstMenuItems[2] = "Allow Boost Mode to override clock settings: Disabled";
+        else
+            firstMenuItems[2] = "Allow Boost Mode to override clock settings: Enabled";
 
         if (Utils::isClkActive())
-            firstMenuItems[2] = "sys-clk is enabled!";
+            firstMenuItems[3] = "sys-clk is enabled!";
         else
-            firstMenuItems[2] = "sys-clk is disabled!";
+            firstMenuItems[3] = "sys-clk is disabled!";
 
         Utils::printItems(firstMenuItems, "Main Menu");
     }
