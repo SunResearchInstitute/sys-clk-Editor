@@ -2,6 +2,7 @@
 #include <switch.h>
 #include <vector>
 #include <string>
+#include <algorithm>
 #include "menu.h"
 
 #define center(p, c) (int)((p - c) / 2)
