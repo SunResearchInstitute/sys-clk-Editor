@@ -51,10 +51,17 @@ void changeConfiguration(const vector<string> &vect, int selection)
     }
 
     if (section->findFirstOption(ConfigItems.at(configSelected)) == nullptr)
-        section->options.push_back(new IniOption(IniOptionType::Option, ConfigItems.at(configSelected), vect.at(selection)));
-
+    {
+        if (ConfigItems.at(configSelected) != "0")
+            section->options.push_back(new IniOption(IniOptionType::Option, ConfigItems.at(configSelected), vect.at(selection)));
+    }
     else
-        section->findFirstOption(ConfigItems.at(configSelected))->value = vect.at(selection);
+    {
+        if (ConfigItems.at(selection) != "0")
+            section->findFirstOption(ConfigItems.at(configSelected))->value = vect.at(selection);
+        else
+            section->options.erase(findIT(section->options, section->findFirstOption(ConfigItems.at(configSelected))));
+    }
 
     if (section->findFirstOption(titles.at(gameSelected).TitleName, false, IniOptionType::SemicolonComment, IniOptionSearchField::Value) == nullptr)
         section->options.insert(section->options.begin(), new IniOption(IniOptionType::SemicolonComment, "", titles.at(gameSelected).TitleName));

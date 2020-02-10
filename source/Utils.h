@@ -14,6 +14,9 @@ enum class ClkState
     Enabled
 };
 
+template <typename T>
+auto findIT(const std::vector<T> &vecOfElements, const T &element) { return std::find(vecOfElements.begin(), vecOfElements.end(), element); }
+
 namespace Utils
 {
 extern int gameSelected;
