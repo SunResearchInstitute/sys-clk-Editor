@@ -4,5 +4,5 @@ Edit your sys-clk configuration!<br>
 
 # Acknowledgements
 * [Cucholix](https://github.com/cucholix) for making the current icon
-* Steven Mattera for making [SimpleIniParser](https://github.com/AtlasNX/SimpleIniParser)
+* Nichole Mattera for making [SimpleIniParser](https://github.com/AtlasNX/SimpleIniParser)
 * Everyone in #developer-chat on [AtlasNX](https://discord.gg/P68Fc2Z) who helped me make this app
