@@ -1,0 +1,50 @@
+name: CI
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Update and Install Build Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y apt-utils
+          sudo apt-get install -y --no-install-recommends sudo ca-certificates pkg-config curl wget bzip2 xz-utils make git bsdtar doxygen gnupg
+          sudo apt-get clean
+
+      - name: Install devkitPro
+        run: |
+          wget https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb
+          sudo dpkg -i devkitpro-pacman.deb
+          rm devkitpro-pacman.deb
+          sudo dkp-pacman -Scc --noconfirm
+
+      - name: Install Switch Toolchain
+        run: |
+          sudo dkp-pacman -Syyu --noconfirm switch-dev
+          sudo dkp-pacman -Scc --noconfirm
+
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: Checkout Submodules
+        uses: textbook/git-checkout-submodule-action@2.0.0
+
+      - name: Build
+        env:
+          DEVKITPRO: /opt/devkitpro
+        run: make
+
+      - uses: actions/upload-artifact@v2
+        name: Upload sys-clk-Editor.elf
+        with:
+          name: sys-clk-Editor.elf
+          path: sys-clk-Editor.elf
+
+      - uses: actions/upload-artifact@v2
+        name: Upload sys-clk-Editor.nro
+        with:
+          name: sys-clk-Editor.nro
+          path: sys-clk-Editor.nro
